@@ -1,6 +1,6 @@
 <?php
-include_once 'config.php';
-
+include_once 'config.php'; 
+//
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/util/sessao.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/action/usuarioAction.php';
 $usuario = new usuarioModel();
