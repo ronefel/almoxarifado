@@ -1,0 +1,3 @@
+ErrorDocument 404 /almoxarifado/report/404.php
+
+Options -Indexes

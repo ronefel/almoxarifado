@@ -1,0 +1,5 @@
+Options -Indexes
+
+<FilesMatch ".(php|html|css|js)$">
+AddDefaultCharset UTF-8
+</FilesMatch>
