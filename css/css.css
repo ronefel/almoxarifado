@@ -21,6 +21,7 @@ input.checkbox {
 textArea {
     margin-bottom: 12px;
     padding: 0.4em;
+    background: white none repeat scroll 0 0 !important;
 }
 
 .overflow {
@@ -63,7 +64,7 @@ fieldset { padding:0; border:0; margin-top:0.3em; }
 .ui-menu {width: -moz-max-content; letter-spacing: -0.01em; z-index: 999;}
 .ui-menu {width: -webkit-max-content;}
 .ui-selectmenu-button span.ui-selectmenu-text {padding: 0.3em 1.8em 0.4em 0.5em !important;}
-.ui-selectmenu-button { background: none !important; }
+.ui-selectmenu-button { background: white none repeat scroll 0 0 !important; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 0.2em 0.5em 0.2em 1.9em !important; }
 .ui-button-text-only .ui-button-text{ padding: .2em 1em !important; }
 .ui-dialog { padding: 0 !important; }
@@ -126,6 +127,7 @@ table.dataTable td {border-top: 0 none !important; border-bottom: 1px solid #d8d
     position: relative;
     display: inline-block;
     margin-bottom: 8px;
+    margin-right: 35px;
 }
 .custom-combobox-toggle {
     bottom: 0;
@@ -137,7 +139,7 @@ table.dataTable td {border-top: 0 none !important; border-bottom: 1px solid #d8d
 .custom-combobox-input {
     background: white none repeat scroll 0 0 !important;
     margin: 0;
-    padding: 6px 10px;
+    padding: 7px 10px;
     width: 300px;
 }
 

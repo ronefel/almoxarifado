@@ -8,11 +8,11 @@ while (!file_exists($arq)) {
     }
 }
 require_once $_SERVER['DOCUMENT_ROOT'] . $urlroot . '/action/fornecedorAction.php';
-$fornecedors = new fornecedorModel();
-$fornecedors = fornecedorAction::listFornecedor();
+$fornecedores = new fornecedorModel();
+$fornecedores = fornecedorAction::listFornecedor();
 ?>
 
 <option selected="selected" disabled="disabled">Selecione...</option>
-<?php for ($i = 0; $i < count($fornecedors); $i++) { ?>
-<option value="<?= $fornecedors[$i]->getFornecedorid() ?>"><?= $fornecedors[$i]->getFornecedornome(TRUE) ?></option>
+<?php for ($i = 0; $i < count($fornecedores); $i++) { ?>
+<option value="<?= $fornecedores[$i]->getFornecedorid() ?>"><?= $fornecedores[$i]->getFantazia(TRUE) ?></option>
 <?php } ?>

@@ -8,10 +8,12 @@ while (!file_exists($arq)) {
     }
 }
 require_once '../action/patrimonioAction.php';
-//require_once '../action/patrimoniosubgrupoAction.php';
-//require_once '../action/patrimoniogrupoAction.php';
+require_once '../action/fornecedorAction.php';
 
 $patrimonio = new patrimonioModel();
+
+$fornecedores = new fornecedorModel();
+$fornecedores = fornecedorAction::listFornecedor();
 
 if (isset($_GET['id']) && !empty($_GET['id'])) {
 
@@ -24,19 +26,15 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 
     $situacao = $_GET['situacao'];
 }
-
-$patrimoniosubgrupos = array(new patrimoniosubgrupoModel());
-if ($patrimonio->getPatrimoniogrupoid() != "") {
-
-    $patrimoniosubgrupos = patrimoniosubgrupoAction::listpatrimoniosubgrupoToPatrimoniogrupo($patrimonio->getPatrimoniogrupoid());
-}
 ?>
 
 <div id="patrimoniobody">
     <script>
-        $(function() {
+        $(function () {
+            
+            $("#fornecedorselect").combobox();
 
-            $("#patrimoniosubgrupoTogruposelect").selectmenu({width: '48.5em'}).selectmenu("menuWidget").addClass("overflow");
+            $("#estadoconservacao").selectmenu({width: '18.5em'}).selectmenu("menuWidget").css('background', 'white none repeat scroll 0 0');
             $("#patrimoniogruposelect").selectmenu({width: '48.5em'}).selectmenu("menuWidget").addClass("overflow");
             $("#patrimonioativo").selectmenu({width: '8em'});
             $("#bpatrimoniosubmit").button({
@@ -74,19 +72,18 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
             });
 
 
-            $("#patrimoniogruposelect").on("selectmenuselect", function() {
+            $("#patrimoniogruposelect").on("selectmenuselect", function () {
                 if ($("#patrimoniogruposelect").val() !== grupoid) {
                     grupoid = $("#patrimoniogruposelect").val();
                     carregarSelect("patrimoniosubgrupoTogruposelect", grupoid);
                 }
             });
 
-            $(".select-plus").click(function() {
+            $(".select-plus").click(function () {
                 var event = $(this).attr("data-evento");
                 var title = $(this).attr("data-titulo");
-                var param = {"grupoid": $("#patrimoniogruposelect").val(), "situacao": "novo"};
+                var param = $(this).attr("data-param");
                 select = $(this).attr("data-id");
-                grupoid = $("#patrimoniogruposelect").val();
                 openSubform(event, title, param);
 
             });
@@ -96,19 +93,19 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
                 tips.html(t).addClass("ui-state-error");
             }
 
-            $("#bpatrimoniosubmit").click(function() {
+            $("#bpatrimoniosubmit").click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "<?=$urlroot?>/controler/patrimoniocontroler.php",
+                    url: "<?= $urlroot ?>/controler/patrimoniocontroler.php",
                     data: $("#patrimonioform").serialize(),
                     dataType: "text",
                     cache: false,
-                    success: function(html) {
+                    success: function (html) {
                         if (html !== "sucesso") {
                             updateTips(html);
                         } else {
                             $("#dialog-form").dialog('close');
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 carregarIndex(pagina);
                             }, 1);
                         }
@@ -119,7 +116,7 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
             $("#bpatrimoniofechar").button({
                 icons: {primary: "ui-icon-closethick"}
             });
-            $("#bpatrimoniofechar").click(function() {
+            $("#bpatrimoniofechar").click(function () {
                 $("#dialog-form").dialog('close');
             });
 
@@ -132,6 +129,20 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
 
             <div class="linha-form">
                 <div class="coluna-form">
+                    <label> Tombamento* </label>
+                    <input 
+                        type="text" 
+                        name="patrimonioid" 
+                        title="Tombamento do Patrimônio" 
+                        size="10"
+                        maxlength="10"
+                        required="required" 
+                        class="text ui-widget-content ui-corner-all" 
+                        value="">
+                </div>       
+            </div>
+            <div class="linha-form">
+                <div class="coluna-form">
                     <label> Descrição* </label>
                     <input 
                         type="text" 
@@ -142,129 +153,158 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
                         required="required" 
                         class="text ui-widget-content ui-corner-all" 
                         value="<?= $patrimonio->getPatrimoniodescricao(TRUE) ?>">
+                </div>                
+            </div>
+
+
+            <div class="linha-form">
+                <div class="coluna-form">
+                    <label> Categoria </label>
+                    <input 
+                        id="categoriaid"
+                        type="text" 
+                        name="categoriaid" 
+                        title="Categoria do patrimonio" 
+                        size="30"
+                        maxlength="20"
+                        class="text ui-widget-content ui-corner-all"
+                        value=''>
                 </div>
                 <div class="coluna-form">
-                    <label> Unidade* </label>
+                    <label> Data da Compra </label>
                     <input 
                         type="text" 
-                        name="patrimoniound" 
-                        title="Unidade de Medida do patrimonio" 
-                        size="10"
-                        maxlength="10"
+                        name="datacompra" 
+                        title="Data de compra do patrimônio" 
+                        size="12"
+                        maxlength="20"
+                        class="text ui-widget-content ui-corner-all" 
+                        value=''>
+                </div>
+                <div class="coluna-form">
+                    <label> Data Implantação </label>
+                    <input 
+                        type="text" 
+                        name="dataimplantacao" 
+                        title="Data de implantação do patrimônio" 
+                        size="12"
+                        maxlength="20"
+                        class="text ui-widget-content ui-corner-all" 
+                        value=''>
+                </div>
+                <div class="coluna-form">
+                    <label> Fim da Garantia </label>
+                    <input 
+                        type="text" 
+                        name="fimgarantia" 
+                        title="Data de implantação do patrimônio" 
+                        size="12"
+                        maxlength="20"
+                        class="text ui-widget-content ui-corner-all" 
+                        value=''>
+                </div>
+            </div>
+            <div class="linha-form">
+                <div class="coluna-form">
+                    <label> Marca </label>
+                    <input 
+                        type="text" 
+                        name="marcaid" 
+                        title="Marca do Patrimonio" 
+                        size="30"
+                        maxlength="20"
                         required="required" 
                         class="text ui-widget-content ui-corner-all" 
-                        value="<?= $patrimonio->getUnd(TRUE) ?>">
+                        value="">
                 </div>
-            </div>
-            <div class="linha-form">
-                <div class="coluna-form">
-                    <label> Grupo de Patrimonios* </label>
-                    <select 
-                        id="patrimoniogruposelect" 
-                        name="patrimoniogrupoid" 
-                        title="Grupo de Patrimonio" 
-                        required="required" >
-                            <option selected="selected" disabled="disabled">Selecione...</option>
-                        
-                        
-                    </select>
                     <div class="select-plus" 
-                         title="Cadastrar Grupo de Patrimonio"
-                         data-id="patrimoniogruposelect"
-                         data-titulo="Cadastrar Grupo de Patrimonio" 
-                         data-evento="patrimoniogrupo"></div>
-                </div>
-            </div>
-            <div class="linha-form">
+                         title="Cadastrar nova marca"
+                         data-id="marcaselect"
+                         data-titulo="Cadastrar Marca" 
+                         data-evento="marca"
+                         data-param="situacao=novo&dialog=dialog-subform"></div>
                 <div class="coluna-form">
-                    <label> Subgrupo de Patrimonios* </label>
-                    <select 
-                        id="patrimoniosubgrupoTogruposelect" 
-                        name="patrimoniosubgrupoid" 
-                        title="Subgrupo de Patrimonio" 
-                        required="required" >
-                            
-                            <option selected="selected" disabled="disabled">Selecione o grupo de patrimonios</option>
-                        
-                    </select>
-                    <div class="select-plus" 
-                         title="Cadastrar Subgrupo de Patrimonio"
-                         data-id="patrimoniosubgrupoTogruposelect"
-                         data-titulo="Cadastrar Subgrupo de Patrimonio" 
-                         data-evento="patrimoniosubgrupo"></div>
-                </div>
-            </div>
-
-
-            <div class="linha-form">
-                <div class="coluna-form">
-                    <label> Código de Barras </label>
+                    <label> Número de Série </label>
                     <input 
-                        id="patrimoniocodigobarras"
                         type="text" 
-                        name="patrimoniocodigobarras" 
-                        title="Código de Barras do Patrimonio" 
+                        name="serie" 
+                        title="Número de Série do patrimônio" 
                         size="12"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        style="text-align: right;"
-                        value="<?= $patrimonio->getCodigobarras(TRUE) ?>">
+                        value=''>
                 </div>
                 <div class="coluna-form">
-                    <label> Estoque Mínimo </label>
+                    <label> Nota Fiscal </label>
                     <input 
-                        id="patrimonioestoqueminimo"
                         type="text" 
-                        name="patrimonioestoqueminimo" 
-                        title="Estoque mínimo do patrimonio" 
+                        name="notafiscal" 
+                        title="Nota Fiscal do Patrimonio" 
                         size="12"
                         maxlength="20"
-                        placeholder="0,000"
                         class="text ui-widget-content ui-corner-all" 
-                        style="text-align: right;"
-                        value='<?= $patrimonio->getEstoqueminimo("form") ?>'>
+                        value="">
                 </div>
                 <div class="coluna-form">
-                    <label> Estoque Máximo </label>
+                    <label> Valor R$</label>
                     <input 
-                        id="patrimonioestoquemaximo"
+                        id="valor"
                         type="text" 
-                        name="patrimonioestoquemaximo" 
-                        title="Estoque máximo do patrimonio" 
-                        size="12"
-                        maxlength="20"
-                        placeholder="0,000"
-                        class="text ui-widget-content ui-corner-all" 
-                        style="text-align: right;"
-                        value='<?= $patrimonio->getEstoquemaximo("form") ?>'>
-                </div>
-                <div class="coluna-form">
-                    <label> Custo Médio R$</label>
-                    <input 
-                        id="patrimoniocustomedio"
-                        type="text" 
-                        name="patrimoniocustomedio" 
-                        title="Custo médio do Patrimonio" 
+                        name="valor" 
+                        title="Valor do Patrimonio" 
                         size="12"
                         maxlength="20"
                         placeholder="R$ 0.00"
                         class="text ui-widget-content ui-corner-all" 
                         style="text-align: right;"
-                        value="<?= $patrimonio->getCustomedio("form") ?>">
+                        value="">
+                </div>
+            </div>
+            <div class="linha-form">
+                <div class="coluna-form">
+                    <label> Departamento </label>
+                    <input 
+                        type="text" 
+                        name="departamentoid" 
+                        title="Departamento do Patrimonio" 
+                        size="30"
+                        maxlength="20"
+                        required="required" 
+                        class="text ui-widget-content ui-corner-all" 
+                        value="">
                 </div>
                 <div class="coluna-form">
-                    <label> Ativo/Inativo </label>
+                    <label> Fornecedor* </label>
                     <select 
-                        id="patrimonioativo" 
-                        name="patrimonioativo">
-                        <option <?php if ($patrimonio->getAtivo() == "1") { ?>
-                                selected="selected"
+                        id="fornecedorselect" 
+                        name="fornecedorid" 
+                        title="Fornecedor do Patrimônio" 
+                        required="required" >
+                            <?php if ($patrimonio->getFornecedorid() == "") { ?>
+                            <option selected="selected" disabled="disabled"></option>
+                        <?php } ?>
+                        <?php for ($i = 0; $i < count($fornecedores); $i++) { ?>
+                            <option
+                            <?php if ($patrimonio->getFornecedorid() == $fornecedores[$i]->getFornecedorid()) { ?>
+                                    selected="selected"
+                                <?php } ?>
+                                value="<?= $fornecedores[$i]->getFornecedorid() ?>"><?= $fornecedores[$i]->getFantazia(TRUE) ?></option>
                             <?php } ?>
-                            value="1">Ativo</option>
-                        <option <?php if ($patrimonio->getAtivo() == "0") { ?>
-                                selected="selected"
-                            <?php } ?>
-                            value="0">Inativo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="linha-form">
+                <div class="coluna-form">
+                    <label> Estado de Conservação </label>
+                    <select 
+                        id="estadoconservacao" 
+                        name="estadoconservacao">
+                        <option value="Não se aplica">Não se aplica</option>
+                        <option value="Excelente">Excelente</option>
+                        <option value="Bom">Bom</option>
+                        <option value="Médio">Médio</option>
+                        <option value="Mau">Mau</option>
+                        <option value="Péssimo">Péssimo</option>
                     </select>
                 </div>
             </div>
@@ -273,7 +313,7 @@ if ($patrimonio->getPatrimoniogrupoid() != "") {
                 style="width: 49.5em; height: 4em;"
                 name="patrimonioobservacao" 
                 title="Observações sobre o Patrimonio" 
-                class="text ui-widget-content ui-corner-all"><?= $patrimonio->getObservacoes() ?></textarea>
+                class="text ui-widget-content ui-corner-all"><?= $patrimonio->getObs() ?></textarea>
             <input 
                 type="hidden" 
                 name="patrimonioid" 

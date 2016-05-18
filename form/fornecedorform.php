@@ -31,6 +31,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 
     $situacao = $_GET['situacao'];
 }
+$dialog = "dialog-form";
+if (isset($_GET['dialog']) && !empty($_GET['dialog'])) {
+
+    $dialog = $_GET['dialog'];
+}
 ?>
 
 <div id="fornecedorbody">
@@ -81,10 +86,25 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         if (html !== "sucesso") {
                             updateTips(html);
                         } else {
-                            $("#dialog-form").dialog('close');
-                            setTimeout(function() {
-                                carregarIndex(pagina);
-                            }, 1);
+                            //se o parametro select não foi setado é sinal 
+                            //que é pra carregar a pagina escolhida no menu
+                            //na index do sistema
+                            //e fechar o dialog-form
+                            if (select === "") {
+                                $("#dialog-form").dialog('close');
+                                setTimeout(function() {
+                                    carregarIndex(pagina);
+                                }, 1);
+                                //se o parametro select foi setado é sinal
+                                //que é pra carrega o select setado
+                                //e fechar o dialog-subform
+                            } else {
+                                $("#dialog-subform").dialog('close');
+                                setTimeout(function() {
+                                    carregarSelect(select);
+                                }, 1);
+                            }
+                            
                         }
                     }
                 });
@@ -94,7 +114,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 icons: {primary: "ui-icon-closethick"}
             });
             $("#bfornecedorfechar").click(function() {
-                $("#dialog-form").dialog('close');
+                $("#<?=$dialog?>").dialog('close');
             });
 
         });
@@ -276,7 +296,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     </select>
                     <div class="select-plus" 
                          title="Cadastrar Grupo de Fornecedor"
-                         data-id="fornecedorgruposelect"
+                         data-id="fornecedorselect"
                          data-titulo="Cadastrar Grupo de Fornecedor" 
                          data-evento="fornecedorgrupo"></div>
                 </div>

@@ -7,7 +7,7 @@ if (Sessao::existe('usuario')) {
     if (DBHOST != 'localhost') {
         $tema = $usu->getLink();
     } else {
-        $tema = 'blitzer';
+        $tema = 'ui-lightness';
     }
 }
 ?>
