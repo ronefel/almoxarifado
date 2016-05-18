@@ -2,7 +2,7 @@
 header ('Content-type: text/html; charset=UTF-8',true);
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/util/util.php';
 /*
- * classe dbConnection
+ * classe dbConnection 
  * gerencia conexões com bancos de dados através de arquivos de configuração.
  */
 
