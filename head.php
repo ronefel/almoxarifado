@@ -3,7 +3,12 @@ $tema = "redmond";
 if (Sessao::existe('usuario')) {
     $usuariot = Sessao::get('usuario');
     $usu = usuarioAction::getUsuario($usuariot);
-    $tema = $usu->getLink();
+
+    if (DBHOST != 'localhost') {
+        $tema = $usu->getLink();
+    } else {
+        $tema = 'blitzer';
+    }
 }
 ?>
 
@@ -12,7 +17,7 @@ if (Sessao::existe('usuario')) {
 <meta content="images/farol-icon2.png" itemprop="image"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="js/jquery-1.11.2.min.js"></script>
-<script src="themes/<?=$tema?>/jquery-ui.min.js"></script>
+<script src="themes/<?= $tema ?>/jquery-ui.min.js"></script>
 <script src="js/jquery.dataTables.min2.js"></script>
 <script src="js/mask.js"></script>
 <script src="js/jquery.maskMoney.js"></script>
@@ -20,7 +25,7 @@ if (Sessao::existe('usuario')) {
 <script src="js/combobox.js"></script>
 <script src="js/jquery-ui-contextmenu.js"></script>
 <link rel="stylesheet" href="css/css.css">
-<link rel="stylesheet" href="themes/<?=$tema?>/jquery-ui.min.css">
+<link rel="stylesheet" href="themes/<?= $tema ?>/jquery-ui.min.css">
 <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.3/themes/ui-lightness/jquery-ui.css">-->
 <link rel="stylesheet" href="css/jquery.dataTables_themeroller.css">
 <script>
@@ -88,8 +93,7 @@ if (Sessao::existe('usuario')) {
                 if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'SEARCH' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'FILE'))
                         || d.tagName.toUpperCase() === 'TEXTAREA') {
                     doPrevent = d.readOnly || d.disabled;
-                }
-                else {
+                } else {
                     doPrevent = true;
                 }
             }

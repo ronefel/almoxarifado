@@ -30,6 +30,9 @@ class Connection extends util {
         $name = $db['name'];
         $host = $db['host'];
         $type = $db['type'];
+        
+        //define a constante host para o sistema mudar o tema quando estiver em localhost
+        define("DBHOST", $host);
 
         //descobre qual o tipo (driver) de banco de dados a ser utilizado
         switch ($type) {
