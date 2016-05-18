@@ -1,0 +1,149 @@
+@charset "UTF-8";
+*{ margin: 0; padding: 0; }
+body {
+    font-size: 85%;
+    color: #243c5f;
+}
+input.text {
+    margin-bottom: 12px;
+    padding: 0.4em;
+    background: white none repeat scroll 0 0 !important;
+}
+
+input.checkbox {
+    display:inline-block;
+    width:15px;
+    height:15px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+}
+
+textArea {
+    margin-bottom: 12px;
+    padding: 0.4em;
+}
+
+.overflow {
+    height: 200px;
+}
+
+*:focus{ outline: 0; }
+
+label, input { display:block; }
+
+fieldset { padding:0; border:0; margin-top:0.3em; }
+
+.ui-dialog .ui-state-error { padding: .3em; }
+
+.form-dicas { border: 1px solid transparent; padding: 0.3em; }
+
+.reader1 { height: 1.55em; min-width: 970px;}
+
+.validateTips { border: 1px solid transparent; padding: 0.3em; margin: 0 0 1em; }
+.form-header { margin: 0 0 0.5em 0; }
+.button-form { }
+
+.linha-form { display: table; height: 4.3em; width: 100%; }
+.coluna-form { float: left; margin: 0 0.3em; }
+.select-plus {float: right; margin: 0 0 0 0.2em;}
+.desabilitado { display: none; background-color: #000000; display: block; height: 325px; opacity: 0.1; position: absolute; top: 235px; width: 709px; z-index: 99;}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .desabilitado { display: none; background-color: #000000; display: block; height: 330px; opacity: 0.1; position: absolute; top: 226px; width: 709px; z-index: 99;}
+    table.dataTable { border-collapse: separate !important; }
+}
+
+.table-search { margin-bottom: 5px; }
+.table-content { padding-top: 5px; height: 474px; overflow: hidden;}
+.toolbar { font-size: 1.3em; }
+
+.ui-menu .ui-state-focus, .ui-menu .ui-state-active{
+    font-weight: normal !important;
+}
+
+.ui-menu {width: -moz-max-content; letter-spacing: -0.01em; z-index: 999;}
+.ui-menu {width: -webkit-max-content;}
+.ui-selectmenu-button span.ui-selectmenu-text {padding: 0.3em 1.8em 0.4em 0.5em !important;}
+.ui-selectmenu-button { background: none !important; }
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 0.2em 0.5em 0.2em 1.9em !important; }
+.ui-button-text-only .ui-button-text{ padding: .2em 1em !important; }
+.ui-dialog { padding: 0 !important; }
+.ui-dialog .ui-dialog-titlebar { padding: 0 1em !important; margin: -0.06em !important; border-radius: 5px 5px 0 0 }
+.ui-dialog .ui-dialog-buttonpane {margin: 0.5em -1em !important; padding: 0.8em 1em 0 0.4em !important;}
+.ui-datepicker{ font-size: 0.9em !important; }
+
+.dataTables_filter input{display: inline !important;}
+.dataTables_filter {margin: 0 0.4em 0.4em; }
+.dataTables_length { margin-bottom: 0.1em !important; }
+.paging_full_numbers{padding: 0.5em 0 !important; }
+.odd {background-color: #f9f9f9;}
+table.dataTable th{text-align: left;}
+table.dataTable td {border-top: 0 none !important; border-bottom: 1px solid #d8dcdf !important;}
+
+.div-tema {
+    background: #000 none repeat scroll 0 0;
+    border: 1px solid #222;
+    color: #fff;
+    float: left;
+    font-family: Verdana,Arial,sans-serif;
+    margin: 0 0 0 100px;
+    padding: 0 4px 4px;
+    position: relative;
+    width: 228px;
+    border-radius: 4px;
+}
+
+.tema-header {
+    background: transparent url("images/themeroller/logo_themeRoller_sml.gif") no-repeat scroll -5px 0;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: normal;
+    height: 46px;
+    margin: 0 0 -1px;
+    overflow: hidden;
+    padding: 0;
+    text-indent: -999999px;
+    width: 213px;
+}
+
+.div-tema img {
+    margin:5px;
+    cursor: pointer;
+    border: 3px solid #000000;
+}
+.div-tema img.selected{
+    border: 3px solid #4297d7;
+}
+.div-tema img:hover{
+    border: 3px solid #4297d7;
+}
+
+.filtro-container {
+    margin: 0 -3px 10px 4px;
+    width: 39.5em;
+}
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+.custom-combobox-toggle {
+    bottom: 0;
+    padding: 0 !important;
+    position: absolute !important;
+    right: -35px;
+    top: 0;
+}
+.custom-combobox-input {
+    background: white none repeat scroll 0 0 !important;
+    margin: 0;
+    padding: 6px 10px;
+    width: 300px;
+}
+
+ul.ui-autocomplete {
+    max-height: 200px;
+    overflow-x: hidden;
+    width: 320px !important;
+    
+}
