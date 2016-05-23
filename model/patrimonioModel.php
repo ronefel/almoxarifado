@@ -1,15 +1,17 @@
 <?php
 header ('Content-type: text/html; charset=UTF-8',true);
-require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/connection/Transaction.php';
 
-class patrimonioModel extends Transaction {
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/util/ExtensionBridge.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/categoriaModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/fornecedorModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/marcaModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/departamentoModel.php';
+
+class patrimonioModel extends ExtensionBridge {
 
     public $patrimonioid;
-    protected $categoriaid;
-    protected $fornecedorid;
     protected $patrimoniodescricao;
     protected $serie;
-    protected $marcaid;
     protected $valor;
     protected $notafiscal;
     protected $datacompra;
@@ -17,7 +19,13 @@ class patrimonioModel extends Transaction {
     protected $dataimplantacao;
     protected $estadoconservacao;
     protected $obs;
-    protected $departamentoid;
+    
+    public function __construct() {
+        parent::addExt(new categoriaModel());
+        parent::addExt(new fornecedorModel());
+        parent::addExt(new marcaModel());
+        parent::addExt(new departamentoModel());
+    }
 
     public function setPatrimonioid($patrimonioid) {
         $this->patrimonioid = $patrimonioid;
@@ -29,26 +37,6 @@ class patrimonioModel extends Transaction {
         } else {
             return addslashes($this->patrimonioid);
         }
-    }
-
-    public function setCategoriaid($categoriaid) {
-        $this->categoriaid = $categoriaid;
-    }
-
-    public function getCategoriaid($tiraAspas = FALSE) {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->categoriaid);
-        } else {
-            return addslashes($this->categoriaid);
-        }
-    }
-
-    public function getFornecedorid() {
-        return $this->fornecedorid;
-    }
-
-    public function setFornecedorid($fornecedorid) {
-        $this->fornecedorid = $fornecedorid;
     }
 
     public function setPatrimoniodescricao($patrimoniodescricao) {
@@ -72,18 +60,6 @@ class patrimonioModel extends Transaction {
             return util::tiraAspas($this->serie);
         } else {
             return addslashes($this->serie);
-        }
-    }
-
-    public function setMarcaid($marcaid) {
-        $this->marcaid = $marcaid;
-    }
-
-    public function getMarcaid($format = "db") {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->marcaid);
-        } else {
-            return addslashes($this->marcaid);
         }
     }
     
@@ -172,18 +148,6 @@ class patrimonioModel extends Transaction {
             return util::tiraAspas($this->obs);
         } else {
             return addslashes($this->obs);
-        }
-    }
-
-    public function setDepartamentoid($departamentoid) {
-        $this->departamentoid = $departamentoid;
-    }
-
-    public function getDepartamentoid($format = "db") {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->departamentoid);
-        } else {
-            return addslashes($this->departamentoid);
         }
     }
 

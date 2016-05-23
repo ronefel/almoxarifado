@@ -41,7 +41,7 @@ switch ($control) {
             if (!count($msg) > 0) {
 
                 if (localAction::isExists($local)) {
-                    $erro[] = "Este Local já está cadastrado.<br/>";
+                    $msg[] = "Este Local já está cadastrado.<br/>";
                 } else {
                     $result = localAction::insertLocal($local);
                     if ($result) {
@@ -62,7 +62,7 @@ switch ($control) {
             if (!count($msg) > 0) {
 
                 if (localAction::isExists($local)) {
-                    $erro[] = "Este Local já está cadastrado.<br/>";
+                    $msg[] = "Este Local já está cadastrado.<br/>";
                 } else {
                     $result = localAction::updateLocal($local);
                     if ($result) {

@@ -83,7 +83,7 @@ if (Sessao::existe('usuario')) {
                     cache: false,
                     success: function (html) {
                         $("#" + select).html(html);
-                        $("#" + select).selectmenu("refresh");
+                        //$("#" + select).selectmenu("refresh");
                     }
                 });
             }
@@ -332,7 +332,7 @@ if (Sessao::existe('usuario')) {
         <div class="ui-widget">
 
             <div class="ui-widget-header reader1" style="display: block;">
-                <div style="padding: 0.2em 0 0 5em; float: left;">FAROL Controle de Estoque</div>
+                <div style="padding: 0.2em 0 0 5em; float: left;">FAROL Controle de Estoque <?php if (DBHOST == 'localhost') {echo " <span style='color: red;'>LOCALHOST</strong>";} ?></div>
                 <div style="float: right;">
                     <button id="bsair" class="bsair">Sair</button>
                 </div>

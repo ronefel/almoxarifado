@@ -147,5 +147,5 @@ ul.ui-autocomplete {
     max-height: 200px;
     overflow-x: hidden;
     width: 320px !important;
-    
+    background: white none repeat scroll 0 0 !important;
 }
