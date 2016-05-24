@@ -58,6 +58,11 @@ class produtoAction extends produtoModel {
             $sql .= 'estoqueatual,';
             $args[] = $produto->getEstoqueatual();
         }
+        
+        if (strlen($produto->getMarcaid()) > 0) {
+            $sql .= 'marcaid,';
+            $args[] = $produto->getMarcaid();
+        }
 
         $sql = substr($sql, 0, strlen($sql) - 1) . ') VALUES (';
         for ($i = 0; $i < count($args); $i++) {
@@ -123,6 +128,10 @@ class produtoAction extends produtoModel {
             $sql .= 'estoqueatual = ?, ';
             $args[] = $produto->getEstoqueatual();
         }
+        if ($produto->getMarcaid() != null) {
+            $sql .= 'marcaid = ?, ';
+            $args[] = $produto->getMarcaid();
+        }
 
         $args[] = $produto->getProdutoid();
 
@@ -176,6 +185,8 @@ class produtoAction extends produtoModel {
                             P.produtogrupoid,
                             P.nome,
                             P.und,
+                            M.marcaid,
+                            M.nome AS marcanome,
                             P.customedio,
                             valormedio(P.produtoid),
                             P.codigobarras,
@@ -203,6 +214,8 @@ class produtoAction extends produtoModel {
                                WHERE EMS.operacao = 2
                                  AND EMS.produtoid = P.produtoid)) AS estoqueatual
                        FROM produto P
+                  LEFT JOIN marca M
+                         ON M.marcaid = P.marcaid
                    ORDER BY P.nome";
 
         $result = Transaction::runExecute($sql);
@@ -217,6 +230,8 @@ class produtoAction extends produtoModel {
             $produto->setProdutogrupoid($row['produtogrupoid']);
             $produto->setProdutonome($row['nome']);
             $produto->setUnd($row['und']);
+            $produto->setMarcaid($row['marcaid']);
+            $produto->setMarcanome($row['marcanome']);
             $produto->setCustomedio($row['customedio']);
             $produto->setValormedio($row['valormedio']);
             $produto->setCodigobarras($row['codigobarras']);
@@ -239,6 +254,8 @@ class produtoAction extends produtoModel {
                             P.produtogrupoid,
                             P.nome,
                             P.und,
+                            M.marcaid,
+                            M.nome AS marcanome,
                             P.customedio,
                             P.codigobarras,
                             P.validade,
@@ -248,6 +265,8 @@ class produtoAction extends produtoModel {
                             P.estoquemaximo,
                             estoqueatual(P.produtoid) AS estoqueatual
                        FROM produto P
+                  LEFT JOIN marca M
+                         ON M.marcaid = P.marcaid
                       WHERE P.produtoid='{$produto->getProdutoid()}'";
 
         $result = Transaction::runExecute($sql);
@@ -262,6 +281,8 @@ class produtoAction extends produtoModel {
             $produto->setProdutogrupoid($row['produtogrupoid']);
             $produto->setProdutonome($row['nome']);
             $produto->setUnd($row['und']);
+            $produto->setMarcaid($row['marcaid']);
+            $produto->setMarcanome($row['marcanome']);
             $produto->setCustomedio($row['customedio']);
             $produto->setCodigobarras($row['codigobarras']);
             $produto->setValidade($row['validade']);

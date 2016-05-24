@@ -36,9 +36,9 @@
                     <tr>
                         <th style="width: 100px;">Ações</th>
                         <th style="width: 100px;">Patrimônio</th>
-                        <th style="width: auto;">Descrição</th>
+                        <th style="width: auto;">Produto</th>
                         <th style="width: auto;">Local - Departamento</th>
-                        <th style="width: auto;">Categoria</th>
+                        <th style="width: auto;">Estado Conservação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,13 +64,13 @@
                                 <?= $patrimonios[$i]->getPatrimonioid() ?>
                             </td>
                             <td>
-                                <?= $patrimonios[$i]->getPatrimoniodescricao(TRUE) ?>
+                                <?= $patrimonios[$i]->getProdutonome(TRUE) ?>
                             </td>
                             <td>
                                 <?= $patrimonios[$i]->getLocalnome(TRUE) ?> - <?= $patrimonios[$i]->getDepartamentonome(TRUE) ?>
                             </td>
                             <td>
-                                <?= $patrimonios[$i]->getCategorianome(TRUE) ?>
+                                <?= $patrimonios[$i]->getEstadoconservacao(TRUE) ?>
                             </td>
                         </tr>
                     <?php } ?>

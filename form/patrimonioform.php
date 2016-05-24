@@ -9,10 +9,9 @@ while (!file_exists($arq)) {
 }
 require_once '../action/patrimonioAction.php';
 require_once '../action/fornecedorAction.php';
-require_once '../action/categoriaAction.php';
-require_once '../action/marcaAction.php';
 require_once '../action/localAction.php';
 require_once '../action/departamentoAction.php';
+require_once '../action/produtoAction.php';
 
 $patrimonio = new patrimonioModel();
 
@@ -21,6 +20,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $patrimonio->setPatrimonioid($_GET['id']);
     $patrimonio = patrimonioAction::getPatrimonio($patrimonio);
 }
+
+$produtos = new produtoModel();
+$produtos = produtoAction::listProduto();
 
 $fornecedores = new fornecedorModel();
 $fornecedores = fornecedorAction::listFornecedor();
@@ -160,7 +162,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         value="<?= $patrimonio->getPatrimonioid(TRUE) ?>">
                 </div>       
                 <div class="coluna-form">
-                    <label> Descrição* </label>
+                    <label> produtoid* </label>
                     <input 
                         type="text" 
                         name="patrimoniodescricao" 
@@ -169,7 +171,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         maxlength="100"
                         required="required" 
                         class="text ui-widget-content ui-corner-all" 
-                        value="<?= $patrimonio->getPatrimoniodescricao(TRUE) ?>">
+                        value="<?= $patrimonio->getProdutoid(TRUE) ?>">
                 </div>                
             </div>
 

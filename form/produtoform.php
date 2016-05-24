@@ -10,6 +10,7 @@ while (!file_exists($arq)) {
 require_once '../action/produtoAction.php';
 require_once '../action/produtosubgrupoAction.php';
 require_once '../action/produtogrupoAction.php';
+require_once '../action/marcaAction.php';
 
 $produto = new produtoModel();
 
@@ -25,6 +26,9 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
     $situacao = $_GET['situacao'];
 }
 
+$marcas = new marcaModel();
+$marcas = marcaAction::listMarca();
+
 $produtogrupos = new produtogrupoModel();
 $produtogrupos = produtogrupoAction::listProdutogrupo();
 
@@ -37,10 +41,12 @@ if ($produto->getProdutogrupoid() != "") {
 
 <div id="produtobody">
     <script>
-        $(function() {
+        $(function () {
 
-            $("#produtosubgrupoTogruposelect").selectmenu({width: '48.5em'}).selectmenu("menuWidget").addClass("overflow");
-            $("#produtogruposelect").selectmenu({width: '48.5em'}).selectmenu("menuWidget").addClass("overflow");
+            $("#produtosubgrupoTogruposelect, #produtogruposelect, #marcaselect").combobox();
+            
+            $(".custom-combobox-input").css('width', '272px');
+            
             $("#produtoativo").selectmenu({width: '8em'});
             $("#bprodutosubmit").button({
                 icons: {primary: "ui-icon-disk"}
@@ -73,18 +79,21 @@ if ($produto->getProdutogrupoid() != "") {
                 allowNegative: false,
                 thousands: '',
                 decimal: '',
-                affixesStay: false
+                affixesStay: false,
+                precision: 0
             });
 
 
-            $("#produtogruposelect").on("selectmenuselect", function() {
-                if ($("#produtogruposelect").val() !== grupoid) {
-                    grupoid = $("#produtogruposelect").val();
-                    carregarSelect("produtosubgrupoTogruposelect", grupoid);
+            $("#produtogruposelect").combobox({
+                select: function (event, ui) {
+                    if ($("#produtogruposelect").val() !== grupoid) {
+                        grupoid = $("#produtogruposelect").val();
+                        carregarSelect("produtosubgrupoTogruposelect", grupoid);
+                    }
                 }
             });
 
-            $(".select-plus").click(function() {
+            $(".select-plus").click(function () {
                 var event = $(this).attr("data-evento");
                 var title = $(this).attr("data-titulo");
                 var param = {"grupoid": $("#produtogruposelect").val(), "situacao": "novo"};
@@ -99,19 +108,19 @@ if ($produto->getProdutogrupoid() != "") {
                 tips.html(t).addClass("ui-state-error");
             }
 
-            $("#bprodutosubmit").click(function() {
+            $("#bprodutosubmit").click(function () {
                 $.ajax({
                     type: "POST",
-                    url: "<?=$urlroot?>/controler/produtocontroler.php",
+                    url: "<?= $urlroot ?>/controler/produtocontroler.php",
                     data: $("#produtoform").serialize(),
                     dataType: "text",
                     cache: false,
-                    success: function(html) {
+                    success: function (html) {
                         if (html !== "sucesso") {
                             updateTips(html);
                         } else {
                             $("#dialog-form").dialog('close');
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 carregarIndex(pagina);
                             }, 1);
                         }
@@ -122,7 +131,7 @@ if ($produto->getProdutogrupoid() != "") {
             $("#bprodutofechar").button({
                 icons: {primary: "ui-icon-closethick"}
             });
-            $("#bprodutofechar").click(function() {
+            $("#bprodutofechar").click(function () {
                 $("#dialog-form").dialog('close');
             });
 
@@ -140,7 +149,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtonome" 
                         title="Descrição do Produto" 
-                        size="82"
+                        style="width: 639px;"
                         maxlength="100"
                         required="required" 
                         class="text ui-widget-content ui-corner-all" 
@@ -152,7 +161,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtound" 
                         title="Unidade de Medida do produto" 
-                        size="10"
+                        style="width: 70px;"
                         maxlength="10"
                         required="required" 
                         class="text ui-widget-content ui-corner-all" 
@@ -168,7 +177,7 @@ if ($produto->getProdutogrupoid() != "") {
                         title="Grupo de Produto" 
                         required="required" >
                             <?php if ($produto->getProdutogrupoid() == "") { ?>
-                            <option selected="selected" disabled="disabled">Selecione...</option>
+                            <option selected="selected" disabled="disabled"></option>
                         <?php } ?>
                         <?php for ($i = 0; $i < count($produtogrupos); $i++) { ?>
                             <option
@@ -184,8 +193,6 @@ if ($produto->getProdutogrupoid() != "") {
                          data-titulo="Cadastrar Grupo de Produto" 
                          data-evento="produtogrupo"></div>
                 </div>
-            </div>
-            <div class="linha-form">
                 <div class="coluna-form">
                     <label> Subgrupo de Produtos* </label>
                     <select 
@@ -217,7 +224,31 @@ if ($produto->getProdutogrupoid() != "") {
                          data-evento="produtosubgrupo"></div>
                 </div>
             </div>
-
+            <div class="linha-form">
+                <div class="coluna-form">
+                    <label> Marca </label>
+                    <select 
+                        id="marcaselect" 
+                        name="marcaid" 
+                        title="Marca do Patrimônio" >
+                            <?php if ($produto->getMarcaid() == "") { ?>
+                            <option selected="selected" disabled="disabled"></option>
+                        <?php } ?>
+                        <?php for ($i = 0; $i < count($marcas); $i++) { ?>
+                            <option
+                            <?php if ($produto->getMarcaid() == $marcas[$i]->getMarcaid()) { ?>
+                                    selected="selected"
+                                <?php } ?>
+                                value="<?= $marcas[$i]->getMarcaid() ?>"><?= $marcas[$i]->getMarcanome(TRUE) ?></option>
+                            <?php } ?>
+                    </select>
+                    <div class="select-plus" 
+                         title="Cadastrar nova marca"
+                         data-id="marcaselect"
+                         data-titulo="Cadastrar Marca" 
+                         data-evento="marca"></div>
+                </div>
+            </div>
 
             <div class="linha-form">
                 <div class="coluna-form">
@@ -227,7 +258,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtocodigobarras" 
                         title="Código de Barras do Produto" 
-                        size="12"
+                        style="width: 202px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
                         style="text-align: right;"
@@ -240,7 +271,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtoestoqueminimo" 
                         title="Estoque mínimo do produto" 
-                        size="12"
+                        style="width: 120px;"
                         maxlength="20"
                         placeholder="0,000"
                         class="text ui-widget-content ui-corner-all" 
@@ -254,7 +285,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtoestoquemaximo" 
                         title="Estoque máximo do produto" 
-                        size="12"
+                        style="width: 120px;"
                         maxlength="20"
                         placeholder="0,000"
                         class="text ui-widget-content ui-corner-all" 
@@ -268,7 +299,7 @@ if ($produto->getProdutogrupoid() != "") {
                         type="text" 
                         name="produtocustomedio" 
                         title="Custo médio do Produto" 
-                        size="12"
+                        style="width: 120px;"
                         maxlength="20"
                         placeholder="R$ 0.00"
                         class="text ui-widget-content ui-corner-all" 

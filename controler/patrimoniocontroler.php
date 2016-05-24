@@ -20,20 +20,12 @@ if (isset($_POST['patrimonioid'])) {
     $patrimonio->setPatrimonioid($_POST['patrimonioid']);
 }
 
-if (isset($_POST['categoriaid'])) {
-    $patrimonio->setCategoriaid($_POST['categoriaid']);
-}
-
-if (isset($_POST['patrimoniodescricao'])) {
-    $patrimonio->setPatrimoniodescricao($_POST['patrimoniodescricao']);
+if (isset($_POST['produtoid'])) {
+    $patrimonio->setProdutoid($_POST['produtoid']);
 }
 
 if (isset($_POST['serie'])) {
     $patrimonio->setSerie($_POST['serie']);
-}
-
-if (isset($_POST['marcaid'])) {
-    $patrimonio->setMarcaid($_POST['marcaid']);
 }
 
 if (isset($_POST['notafiscal'])) {
@@ -93,9 +85,9 @@ switch ($control) {
                 $msg[] = "O tombamento informado já está cadastrado!";
             }
 
-            if ($patrimonio->getPatrimoniodescricao() == "") {
+            if ($patrimonio->getProdutoid() == "") {
 
-                $msg[] = "O Campo 'Descrição' não pode ser vazio.<br/>";
+                $msg[] = "Tem que selecionar um produto.<br/>";
             }
 
             if (!count($msg) > 0) {
@@ -111,9 +103,9 @@ switch ($control) {
 
     case 'editar': {
 
-            if ($patrimonio->getPatrimoniodescricao() == "") {
+            if ($patrimonio->getProdutoid() == "") {
 
-                $msg[] = "O Campo 'Descrição' não pode ser vazio.<br/>";
+                $msg[] = "Tem que selecionar um produto.<br/>";
             }
 
             if (!count($msg) > 0) {
@@ -141,21 +133,23 @@ switch ($control) {
         }break;
 
     case 'relatorio': {
+        
+        $msg[] = 'Não implementado.';
 
-            $patrimonios = new patrimonioModel();
-            $patrimonios = patrimonioAction::listPatrimonio();
-
-            if (count($patrimonios) > 0) {
-                $estoquetotal = 0.0;
-
-                ob_start();
-                include_once "../report/relatorio/patrimonio.php";
-                $relatorio = ob_get_clean();
-
-                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios");
-            } else {
-                $msg[] = 'erro=Nenhum patrimonio cadastrado.';
-            }
+//            $patrimonios = new patrimonioModel();
+//            $patrimonios = patrimonioAction::listPatrimonio();
+//
+//            if (count($patrimonios) > 0) {
+//                $estoquetotal = 0.0;
+//
+//                ob_start();
+//                include_once "../report/relatorio/patrimonio.php";
+//                $relatorio = ob_get_clean();
+//
+//                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios");
+//            } else {
+//                $msg[] = 'erro=Nenhum patrimonio cadastrado.';
+//            }
         }break;
 }
 if (count($msg) > 0) {

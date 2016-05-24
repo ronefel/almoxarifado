@@ -2,15 +2,13 @@
 header ('Content-type: text/html; charset=UTF-8',true);
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/util/ExtensionBridge.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/categoriaModel.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/fornecedorModel.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/marcaModel.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/departamentoModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/produtoModel.php';
 
 class patrimonioModel extends ExtensionBridge {
 
     public $patrimonioid;
-    protected $patrimoniodescricao;
     protected $serie;
     protected $valor;
     protected $notafiscal;
@@ -21,10 +19,9 @@ class patrimonioModel extends ExtensionBridge {
     protected $obs;
     
     public function __construct() {
-        parent::addExt(new categoriaModel());
         parent::addExt(new fornecedorModel());
-        parent::addExt(new marcaModel());
         parent::addExt(new departamentoModel());
+        parent::addExt(new produtoModel());
     }
 
     public function setPatrimonioid($patrimonioid) {
@@ -36,18 +33,6 @@ class patrimonioModel extends ExtensionBridge {
             return util::tiraAspas($this->patrimonioid);
         } else {
             return addslashes($this->patrimonioid);
-        }
-    }
-
-    public function setPatrimoniodescricao($patrimoniodescricao) {
-        $this->patrimoniodescricao = $patrimoniodescricao;
-    }
-
-    public function getPatrimoniodescricao($tiraAspas = FALSE) {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->patrimoniodescricao);
-        } else {
-            return addslashes($this->patrimoniodescricao);
         }
     }
 

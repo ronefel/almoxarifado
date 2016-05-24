@@ -35,6 +35,10 @@ if (isset($_POST['produtosubgrupoid'])) {
     $produto->setProdutosubgrupoid($_POST['produtosubgrupoid']);
 }
 
+if (isset($_POST['marcaid'])) {
+    $produto->setMarcaid($_POST['marcaid']);
+}
+
 if (isset($_POST['produtocustomedio'])) {
     $produto->setCustomedio($_POST['produtocustomedio']);
 }

@@ -1,8 +1,8 @@
 <?php
 header ('Content-type: text/html; charset=UTF-8',true);
-require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/connection/Transaction.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/almoxarifado/model/marcaModel.php';
 
-class produtoModel extends Transaction {
+class produtoModel extends marcaModel {
 
     public $produtoid;
     protected $produtosubgrupoid;

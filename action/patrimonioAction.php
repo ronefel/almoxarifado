@@ -15,17 +15,13 @@ class patrimonioAction extends patrimonioModel {
             $sql .= 'patrimonioid,';
             $args[] = $patrimonio->getPatrimonioid();
         }
-        if (strlen($patrimonio->getCategoriaid()) > 0) {
-            $sql .= 'categoriaid,';
-            $args[] = $patrimonio->getCategoriaid();
-        }
         if (strlen($patrimonio->getFornecedorid()) > 0) {
             $sql .= 'fornecedorid,';
             $args[] = $patrimonio->getFornecedorid();
         }
-        if (strlen($patrimonio->getPatrimoniodescricao()) > 0) {
-            $sql .= 'descricao,';
-            $args[] = $patrimonio->getPatrimoniodescricao();
+        if (strlen($patrimonio->getProdutoid()) > 0) {
+            $sql .= 'produtoid,';
+            $args[] = $patrimonio->getProdutoid();
         }
         if (strlen($patrimonio->getSerie()) > 0) {
             $sql .= 'serie,';
@@ -34,10 +30,6 @@ class patrimonioAction extends patrimonioModel {
         if (strlen($patrimonio->getValor()) > 0) {
             $sql .= 'valor,';
             $args[] = $patrimonio->getValor();
-        }
-        if (strlen($patrimonio->getMarcaid()) > 0) {
-            $sql .= 'marcaid,';
-            $args[] = $patrimonio->getMarcaid();
         }
         if (strlen($patrimonio->getDatacompra()) > 0) {
             $sql .= 'datacompra,';
@@ -84,17 +76,13 @@ class patrimonioAction extends patrimonioModel {
 
         $sql = 'update patrimonio set ';
 
-        if ($patrimonio->getCategoriaid() != null) {
-            $sql .= 'categoriaid = ?, ';
-            $args[] = $patrimonio->getCategoriaid();
-        }
         if ($patrimonio->getFornecedorid() != null) {
             $sql .= 'fornecedorid = ?, ';
             $args[] = $patrimonio->getFornecedorid();
         }
-        if (isset($patrimonio->patrimoniodescricao)) {
-            $sql .= 'descricao = ?, ';
-            $args[] = $patrimonio->getPatrimoniodescricao();
+        if ($patrimonio->getProdutoid() != null) {
+            $sql .= 'produtoid = ?, ';
+            $args[] = $patrimonio->getProdutoid();
         }
         if (isset($patrimonio->serie)) {
             $sql .= 'serie = ?, ';
@@ -103,10 +91,6 @@ class patrimonioAction extends patrimonioModel {
         if (isset($patrimonio->valor)) {
             $sql .= 'valor = ?, ';
             $args[] = $patrimonio->getValor();
-        }
-        if ($patrimonio->getMarcaid() != null) {
-            $sql .= 'marcaid = ?, ';
-            $args[] = $patrimonio->getMarcaid();
         }
         if (isset($patrimonio->datacompra)) {
             $sql .= 'datacompra = ?, ';
@@ -166,15 +150,12 @@ class patrimonioAction extends patrimonioModel {
     public static function listPatrimonio() {
 
         $sql = "     SELECT P.patrimonioid,
-                            P.categoriaid,
-                            C.nome AS categorianome,
                             P.fornecedorid,
                             F.fantazia,
-                            P.descricao,
+                            PR.produtoid,
+                            PR.nome AS produtonome,
                             P.serie,
                             P.valor,
-                            P.marcaid,
-                            M.nome AS marcanome,
                             P.datacompra,
                             P.notafiscal,
                             P.fimgarantia,
@@ -186,17 +167,15 @@ class patrimonioAction extends patrimonioModel {
                             L.localid,
                             L.nome AS localnome
                        FROM patrimonio P
-                  LEFT JOIN categoria C
-                         ON C.categoriaid = P.categoriaid
+                 INNER JOIN produto PR
+                         ON PR.produtoid = P.produtoid
                   LEFT JOIN fornecedor F
                          ON F.fornecedorid = P.fornecedorid
-                  LEFT JOIN marca M
-                         ON M.marcaid = P.marcaid
                   LEFT JOIN departamento D
                          ON D.departamentoid = P.departamentoid
                   LEFT JOIN local L
                          ON L.localid = D.localid
-                   ORDER BY P.descricao";
+                   ORDER BY PR.nome";
 
         $result = Transaction::runExecute($sql);
 
@@ -206,15 +185,12 @@ class patrimonioAction extends patrimonioModel {
 
             $patrimonio = new patrimonioModel();
             $patrimonio->setPatrimonioid($row['patrimonioid']);
-            $patrimonio->setCategoriaid($row['categoriaid']);
-            $patrimonio->setCategorianome($row['categorianome']);
             $patrimonio->setFornecedorid($row['fornecedorid']);
             $patrimonio->setFantazia($row['fantazia']);
-            $patrimonio->setPatrimoniodescricao($row['descricao']);
+            $patrimonio->setProdutoid($row['produtoid']);
+            $patrimonio->setProdutonome($row['produtonome']);
             $patrimonio->setSerie($row['serie']);
             $patrimonio->setValor($row['valor']);
-            $patrimonio->setMarcaid($row['marcaid']);
-            $patrimonio->setMarcanome($row['marcanome']);
             $patrimonio->setDatacompra($row['datacompra']);
             $patrimonio->setNotafiscal($row['notafiscal']);
             $patrimonio->setFimgarantia($row['fimgarantia']);
@@ -234,15 +210,13 @@ class patrimonioAction extends patrimonioModel {
     public static function getPatrimonio($patrimonio) {
 
         $sql = "     SELECT P.patrimonioid,
-                            P.categoriaid,
-                            C.nome AS categorianome,
                             P.fornecedorid,
                             F.fantazia,
+                            PR.produtoid,
+                            PR.nome AS produtonome,
                             P.descricao,
                             P.serie,
                             P.valor,
-                            P.marcaid,
-                            M.nome AS marcanome,
                             P.datacompra,
                             P.notafiscal,
                             P.fimgarantia,
@@ -254,6 +228,8 @@ class patrimonioAction extends patrimonioModel {
                             L.localid,
                             L.nome AS localnome
                        FROM patrimonio P
+                 INNER JOIN produto PR
+                         ON PR.produtoid = P.produtoid
                   LEFT JOIN categoria C
                          ON C.categoriaid = P.categoriaid
                   LEFT JOIN fornecedor F
@@ -274,15 +250,12 @@ class patrimonioAction extends patrimonioModel {
 
             $patrimonio = new patrimonioModel();
             $patrimonio->setPatrimonioid($row['patrimonioid']);
-            $patrimonio->setCategoriaid($row['categoriaid']);
-            $patrimonio->setCategorianome($row['categorianome']);
             $patrimonio->setFornecedorid($row['fornecedorid']);
             $patrimonio->setFantazia($row['fantazia']);
-            $patrimonio->setPatrimoniodescricao($row['descricao']);
+            $patrimonio->setProdutoid($row['produtoid']);
+            $patrimonio->setProdutonome($row['produtonome']);
             $patrimonio->setSerie($row['serie']);
             $patrimonio->setValor($row['valor']);
-            $patrimonio->setMarcaid($row['marcaid']);
-            $patrimonio->setMarcanome($row['marcanome']);
             $patrimonio->setDatacompra($row['datacompra']);
             $patrimonio->setNotafiscal($row['notafiscal']);
             $patrimonio->setFimgarantia($row['fimgarantia']);
