@@ -84,6 +84,7 @@ if (Sessao::existe('usuario')) {
                     success: function (html) {
                         $("#" + select).html(html);
                         //$("#" + select).selectmenu("refresh");
+                        $("#" + select).combobox("refresh");
                     }
                 });
             }

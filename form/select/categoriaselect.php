@@ -12,7 +12,7 @@ $locais = new categoriaModel();
 $locais = categoriaAction::listCategoria();
 ?>
 
-<option selected="selected" disabled="disabled">Selecione...</option>
+<option selected="selected" disabled="disabled"></option>
 <?php for ($i = 0; $i < count($locais); $i++) { ?>
 <option value="<?= $locais[$i]->getCategoriaid() ?>"><?= $locais[$i]->getCategorianome(TRUE) ?></option>
 <?php } ?>  

@@ -11,6 +11,10 @@ class patrimonioAction extends patrimonioModel {
 
         $sql = "insert into patrimonio (";
 
+        if (strlen($patrimonio->getPatrimonioid()) > 0) {
+            $sql .= 'patrimonioid,';
+            $args[] = $patrimonio->getPatrimonioid();
+        }
         if (strlen($patrimonio->getCategoriaid()) > 0) {
             $sql .= 'categoriaid,';
             $args[] = $patrimonio->getCategoriaid();
@@ -59,7 +63,6 @@ class patrimonioAction extends patrimonioModel {
             $sql .= 'obs,';
             $args[] = $patrimonio->getObs();
         }
-
         if (strlen($patrimonio->getDepartamentoid()) > 0) {
             $sql .= 'departamentoid,';
             $args[] = $patrimonio->getDepartamentoid();
@@ -81,11 +84,11 @@ class patrimonioAction extends patrimonioModel {
 
         $sql = 'update patrimonio set ';
 
-        if (isset($patrimonio->categoriaid)) {
+        if ($patrimonio->getCategoriaid() != null) {
             $sql .= 'categoriaid = ?, ';
             $args[] = $patrimonio->getCategoriaid();
         }
-        if (isset($patrimonio->fornecedorid)) {
+        if ($patrimonio->getFornecedorid() != null) {
             $sql .= 'fornecedorid = ?, ';
             $args[] = $patrimonio->getFornecedorid();
         }
@@ -101,7 +104,7 @@ class patrimonioAction extends patrimonioModel {
             $sql .= 'valor = ?, ';
             $args[] = $patrimonio->getValor();
         }
-        if (isset($patrimonio->marcaid)) {
+        if ($patrimonio->getMarcaid() != null) {
             $sql .= 'marcaid = ?, ';
             $args[] = $patrimonio->getMarcaid();
         }
@@ -129,7 +132,7 @@ class patrimonioAction extends patrimonioModel {
             $sql .= 'obs = ?, ';
             $args[] = $patrimonio->getObs();
         }
-        if (isset($patrimonio->departamentoid)) {
+        if ($patrimonio->getDepartamentoid() != null) {
             $sql .= 'departamentoid = ?, ';
             $args[] = $patrimonio->getDepartamentoid();
         }
@@ -232,19 +235,35 @@ class patrimonioAction extends patrimonioModel {
 
         $sql = "     SELECT P.patrimonioid,
                             P.categoriaid,
+                            C.nome AS categorianome,
                             P.fornecedorid,
+                            F.fantazia,
                             P.descricao,
                             P.serie,
                             P.valor,
                             P.marcaid,
+                            M.nome AS marcanome,
                             P.datacompra,
                             P.notafiscal,
                             P.fimgarantia,
                             P.dataimplantacao,
                             P.estadoconservacao,
                             P.obs,
-                            P.departamentoid
+                            P.departamentoid,
+                            D.nome AS departamentonome,
+                            L.localid,
+                            L.nome AS localnome
                        FROM patrimonio P
+                  LEFT JOIN categoria C
+                         ON C.categoriaid = P.categoriaid
+                  LEFT JOIN fornecedor F
+                         ON F.fornecedorid = P.fornecedorid
+                  LEFT JOIN marca M
+                         ON M.marcaid = P.marcaid
+                  LEFT JOIN departamento D
+                         ON D.departamentoid = P.departamentoid
+                  LEFT JOIN local L
+                         ON L.localid = D.localid
                       WHERE P.patrimonioid='{$patrimonio->getPatrimonioid()}'";
 
         $result = Transaction::runExecute($sql);
@@ -256,11 +275,14 @@ class patrimonioAction extends patrimonioModel {
             $patrimonio = new patrimonioModel();
             $patrimonio->setPatrimonioid($row['patrimonioid']);
             $patrimonio->setCategoriaid($row['categoriaid']);
+            $patrimonio->setCategorianome($row['categorianome']);
             $patrimonio->setFornecedorid($row['fornecedorid']);
+            $patrimonio->setFantazia($row['fantazia']);
             $patrimonio->setPatrimoniodescricao($row['descricao']);
             $patrimonio->setSerie($row['serie']);
             $patrimonio->setValor($row['valor']);
             $patrimonio->setMarcaid($row['marcaid']);
+            $patrimonio->setMarcanome($row['marcanome']);
             $patrimonio->setDatacompra($row['datacompra']);
             $patrimonio->setNotafiscal($row['notafiscal']);
             $patrimonio->setFimgarantia($row['fimgarantia']);
@@ -268,6 +290,9 @@ class patrimonioAction extends patrimonioModel {
             $patrimonio->setEstadoconservacao($row['estadoconservacao']);
             $patrimonio->setObs($row['obs']);
             $patrimonio->setDepartamentoid($row['departamentoid']);
+            $patrimonio->setDepartamentonome($row['departamentonome']);
+            $patrimonio->setLocalid($row['localid']);
+            $patrimonio->setLocalnome($row['localnome']);
         }
 
         return $patrimonio;

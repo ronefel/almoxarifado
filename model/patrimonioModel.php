@@ -95,11 +95,15 @@ class patrimonioModel extends ExtensionBridge {
         $this->datacompra = $datacompra;
     }
 
-    public function getDatacompra($tiraAspas = FALSE) {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->datacompra);
+    public function getDatacompra($br = FALSE) {
+        if (strlen($this->datacompra) > 0) {
+            if ($br) {
+                return util::dateToBR($this->datacompra);
+            } else {
+                return $this->datacompra;
+            }
         } else {
-            return addslashes($this->datacompra);
+            return $this->datacompra;
         }
     }
 
@@ -107,11 +111,15 @@ class patrimonioModel extends ExtensionBridge {
         $this->fimgarantia = $fimgarantia;
     }
 
-    public function getFimgarantia($tiraAspas = FALSE) {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->fimgarantia);
+    public function getFimgarantia($br = FALSE) {
+        if (strlen($this->fimgarantia) > 0) {
+            if ($br) {
+                return util::dateToBR($this->fimgarantia);
+            } else {
+                return $this->fimgarantia;
+            }
         } else {
-            return addslashes($this->fimgarantia);
+            return $this->fimgarantia;
         }
     }
 
@@ -119,11 +127,15 @@ class patrimonioModel extends ExtensionBridge {
         $this->dataimplantacao = $dataimplantacao;
     }
 
-    public function getDataimplantacao($tiraAspas = FALSE) {
-        if ($tiraAspas) {
-            return util::tiraAspas($this->dataimplantacao);
+    public function getDataimplantacao($br = FALSE) {
+        if (strlen($this->dataimplantacao) > 0) {
+            if ($br) {
+                return util::dateToBR($this->dataimplantacao);
+            } else {
+                return $this->dataimplantacao;
+            }
         } else {
-            return addslashes($this->dataimplantacao);
+            return $this->dataimplantacao;
         }
     }
 
@@ -131,7 +143,7 @@ class patrimonioModel extends ExtensionBridge {
         $this->estadoconservacao = $estadoconservacao;
     }
 
-    public function getEstadoconservacao($format = "db") {
+    public function getEstadoconservacao($tiraAspas = FALSE) {
         if ($tiraAspas) {
             return util::tiraAspas($this->estadoconservacao);
         } else {
@@ -143,7 +155,7 @@ class patrimonioModel extends ExtensionBridge {
         $this->obs = $obs;
     }
 
-    public function getObs($format = "db") {
+    public function getObs($tiraAspas = FALSE) {
         if ($tiraAspas) {
             return util::tiraAspas($this->obs);
         } else {

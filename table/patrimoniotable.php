@@ -37,7 +37,7 @@
                         <th style="width: 100px;">Ações</th>
                         <th style="width: 100px;">Patrimônio</th>
                         <th style="width: auto;">Descrição</th>
-                        <th style="width: auto;">Obs.</th>
+                        <th style="width: auto;">Local - Departamento</th>
                         <th style="width: auto;">Categoria</th>
                     </tr>
                 </thead>
@@ -67,10 +67,10 @@
                                 <?= $patrimonios[$i]->getPatrimoniodescricao(TRUE) ?>
                             </td>
                             <td>
-                                <?= $patrimonios[$i]->getObs(TRUE) ?>
+                                <?= $patrimonios[$i]->getLocalnome(TRUE) ?> - <?= $patrimonios[$i]->getDepartamentonome(TRUE) ?>
                             </td>
                             <td>
-                                <?= $patrimonios[$i]->getCategoriaid() ?>
+                                <?= $patrimonios[$i]->getCategorianome(TRUE) ?>
                             </td>
                         </tr>
                     <?php } ?>

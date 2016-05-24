@@ -1,5 +1,6 @@
 <?php
-header ('Content-type: text/html; charset=UTF-8',true);
+
+header('Content-type: text/html; charset=UTF-8', true);
 $nivel = 1;
 include_once '../config.php';
 
@@ -70,6 +71,10 @@ if (isset($_POST['departamentoid'])) {
     $patrimonio->setDepartamentoid($_POST['departamentoid']);
 }
 
+if (isset($_POST['fornecedorid'])) {
+    $patrimonio->setFornecedorid($_POST['fornecedorid']);
+}
+
 switch ($control) {
 
     case 'view': {
@@ -81,6 +86,12 @@ switch ($control) {
         }break;
 
     case 'novo': {
+
+            $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
+            
+            if(strlen($patrimoniodb->getPatrimonioid()) > 0){
+                $msg[] = "O tombamento informado já está cadastrado!";
+            }
 
             if ($patrimonio->getPatrimoniodescricao() == "") {
 

@@ -16,6 +16,12 @@ require_once '../action/departamentoAction.php';
 
 $patrimonio = new patrimonioModel();
 
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+
+    $patrimonio->setPatrimonioid($_GET['id']);
+    $patrimonio = patrimonioAction::getPatrimonio($patrimonio);
+}
+
 $fornecedores = new fornecedorModel();
 $fornecedores = fornecedorAction::listFornecedor();
 
@@ -28,15 +34,10 @@ $marcas = marcaAction::listMarca();
 $locais = new localModel();
 $locais = localAction::listLocal();
 
-$departamentos = array(new departamentoModel());
-if ($usuario->getLocalid() != "") {
-    $departamentos = departamentoAction::listdepartamentoToLocal($usuario->getLocalid());
-}
+$estadoconservacoes = Array('Excelente', 'Bom', 'Médio', 'Mau', 'Péssimo','Não se aplica');
 
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-
-    $patrimonio->setPatrimonioid($_GET['id']);
-    $patrimonio = patrimonioAction::getPatrimonio($patrimonio);
+if ($patrimonio->getLocalid() != "") {
+    $departamentos = departamentoAction::listdepartamentoToLocal($patrimonio->getLocalid());
 }
 
 $situacao = "";
@@ -49,13 +50,13 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 <div id="patrimoniobody">
     <script>
         $(function () {
-            
-            $("#fornecedorselect, #marcaselect, #categoriaselect, #departamentoselect, #localselect").combobox();
-            
+
+            $("#fornecedorselect, #marcaselect, #categoriaselect, #departamentoTolocalselect, #localselect").combobox();
+
             $(".departamento-custom .custom-combobox-input").css('width', '264px');
-            
+
             $("#estadoconservacao").selectmenu({width: '18.5em'}).selectmenu("menuWidget").css('background', 'white none repeat scroll 0 0');
-            
+
             $("#bpatrimoniosubmit").button({
                 icons: {primary: "ui-icon-disk"}
             });
@@ -69,39 +70,34 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 dateFormat: "dd/mm/yy"
             });
 
-            $("#patrimoniocustomedio").maskMoney({
+            $("#valor").maskMoney({
                 prefix: 'R$ ',
                 allowNegative: false,
                 thousands: '',
                 decimal: ',',
                 affixesStay: false
             });
-            $("#patrimonioestoqueminimo, #patrimonioestoquemaximo").maskMoney({
-                allowNegative: false,
-                thousands: '',
-                decimal: ',',
-                affixesStay: false,
-                precision: 3
-            });
-            $("#patrimoniocodigobarras").maskMoney({
+            $("#notafiscal").maskMoney({
                 allowNegative: false,
                 thousands: '',
                 decimal: '',
                 affixesStay: false
             });
 
-
-            $("#patrimoniogruposelect").on("selectmenuselect", function () {
-                if ($("#patrimoniogruposelect").val() !== grupoid) {
-                    grupoid = $("#patrimoniogruposelect").val();
-                    carregarSelect("patrimoniosubgrupoTogruposelect", grupoid);
+            $("#localselect").combobox({
+                select: function (event, ui) {
+                    if ($("#localselect").val() !== localid) {
+                        localid = $("#localselect").val();
+                        carregarSelect("departamentoTolocalselect", localid);
+                        //$("#departamentoTolocalselect").combobox("refresh");
+                    }
                 }
             });
 
             $(".select-plus").click(function () {
                 var event = $(this).attr("data-evento");
                 var title = $(this).attr("data-titulo");
-                var param = $(this).attr("data-param");
+                var param = {"localid": $("#localselect").val(), "situacao": "novo"};
                 select = $(this).attr("data-id");
                 openSubform(event, title, param);
 
@@ -151,13 +147,17 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <label> Tombamento* </label>
                     <input 
                         type="text" 
-                        name="patrimonioid" 
                         title="Tombamento do Patrimônio" 
                         style="width: 100px;"
                         maxlength="10"
-                        required="required" 
+                        <?php if ($situacao == "editar") { ?>
+                            disabled="disabled"
+                        <?php } else { ?>
+                            name="patrimonioid" 
+                            required="required"
+                        <?php } ?>
                         class="text ui-widget-content ui-corner-all" 
-                        value="">
+                        value="<?= $patrimonio->getPatrimonioid(TRUE) ?>">
                 </div>       
                 <div class="coluna-form">
                     <label> Descrição* </label>
@@ -180,8 +180,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <select 
                         id="categoriaselect" 
                         name="categoriaid" 
-                        title="Categoria do Patrimônio" 
-                        required="required" >
+                        title="Categoria do Patrimônio" >
                             <?php if ($patrimonio->getCategoriaid() == "") { ?>
                             <option selected="selected" disabled="disabled"></option>
                         <?php } ?>
@@ -190,15 +189,14 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             <?php if ($patrimonio->getCategoriaid() == $categorias[$i]->getCategoriaid()) { ?>
                                     selected="selected"
                                 <?php } ?>
-                                    value="<?= $categorias[$i]->getCategoriaid() ?>"><?= $categorias[$i]->getCategorianome(TRUE) ?></option>
+                                value="<?= $categorias[$i]->getCategoriaid() ?>"><?= $categorias[$i]->getCategorianome(TRUE) ?></option>
                             <?php } ?>
                     </select>
                     <div class="select-plus" 
                          title="Cadastrar nova categoria"
                          data-id="categoriaselect"
                          data-titulo="Cadastrar Categoria" 
-                         data-evento="categoria"
-                         data-param="situacao=novo&dialog=dialog-subform"></div>
+                         data-evento="categoria"></div>
                 </div>
                 <div class="coluna-form">
                     <label> Data da Compra </label>
@@ -210,7 +208,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         style="width: 100px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        value=''>
+                        value="<?= $patrimonio->getDatacompra(TRUE) ?>">
                 </div>
                 <div class="coluna-form">
                     <label> Data Implantação </label>
@@ -222,7 +220,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         style="width: 100px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        value=''>
+                        value="<?= $patrimonio->getDataimplantacao(TRUE) ?>">
                 </div>
                 <div class="coluna-form">
                     <label> Fim da Garantia </label>
@@ -234,7 +232,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         style="width: 100px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        value=''>
+                        value="<?= $patrimonio->getFimgarantia(TRUE) ?>">
                 </div>
             </div>
             <div class="linha-form">
@@ -242,9 +240,8 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <label> Marca </label>
                     <select 
                         id="marcaselect" 
-                        name="carcaid" 
-                        title="Marca do Patrimônio" 
-                        required="required" >
+                        name="marcaid" 
+                        title="Marca do Patrimônio" >
                             <?php if ($patrimonio->getMarcaid() == "") { ?>
                             <option selected="selected" disabled="disabled"></option>
                         <?php } ?>
@@ -253,15 +250,14 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             <?php if ($patrimonio->getMarcaid() == $marcas[$i]->getMarcaid()) { ?>
                                     selected="selected"
                                 <?php } ?>
-                                    value="<?= $marcas[$i]->getMarcaid() ?>"><?= $marcas[$i]->getMarcanome(TRUE) ?></option>
+                                value="<?= $marcas[$i]->getMarcaid() ?>"><?= $marcas[$i]->getMarcanome(TRUE) ?></option>
                             <?php } ?>
                     </select>
                     <div class="select-plus" 
                          title="Cadastrar nova marca"
                          data-id="marcaselect"
                          data-titulo="Cadastrar Marca" 
-                         data-evento="marca"
-                         data-param="situacao=novo&dialog=dialog-subform"></div>
+                         data-evento="marca"></div>
                 </div>
                 <div class="coluna-form">
                     <label> Número de Série </label>
@@ -272,18 +268,19 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         style="width: 100px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        value=''>
+                        value="<?= $patrimonio->getSerie(TRUE) ?>">
                 </div>
                 <div class="coluna-form">
                     <label> Nota Fiscal </label>
                     <input 
+                        id="notafiscal"
                         type="text" 
                         name="notafiscal" 
                         title="Nota Fiscal do Patrimonio" 
                         style="width: 100px;"
                         maxlength="20"
                         class="text ui-widget-content ui-corner-all" 
-                        value="">
+                        value="<?= $patrimonio->getNotafiscal(TRUE) ?>">
                 </div>
                 <div class="coluna-form">
                     <label> Valor R$</label>
@@ -297,7 +294,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         placeholder="R$ 0.00"
                         class="text ui-widget-content ui-corner-all" 
                         style="text-align: right;"
-                        value="">
+                        value="<?= $patrimonio->getValor("form") ?>">
                 </div>
             </div>
             <div class="linha-form">
@@ -306,8 +303,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <select 
                         id="localselect" 
                         name="localid" 
-                        title="Local do Patrimônio" 
-                        required="required" >
+                        title="Local do Patrimônio" >
                             <?php if ($patrimonio->getLocalid() == "") { ?>
                             <option selected="selected" disabled="disabled"></option>
                         <?php } ?>
@@ -316,54 +312,64 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             <?php if ($patrimonio->getLocalid() == $locais[$i]->getLocalid()) { ?>
                                     selected="selected"
                                 <?php } ?>
-                                    value="<?= $locais[$i]->getLocalid() ?>"><?= $locais[$i]->getLocalnome(TRUE) ?></option>
+                                value="<?= $locais[$i]->getLocalid() ?>"><?= $locais[$i]->getLocalnome(TRUE) ?></option>
                             <?php } ?>
                     </select>
                     <div class="select-plus" 
                          title="Cadastrar novo Local"
                          data-id="localselect"
                          data-titulo="Cadastrar Local" 
-                         data-evento="local"
-                         data-param="situacao=novo&dialog=dialog-subform"></div>
+                         data-evento="local"></div>
                 </div>
                 <div class="coluna-form departamento-custom">
                     <label> Departamento </label>
                     <select 
-                        id="departamentoselect" 
+                        id="departamentoTolocalselect" 
                         name="departamentoid" 
-                        title="Departamento do Patrimônio" 
-                        required="required" >
+                        title="Departamento do Patrimônio" >
+                            <?php if ($patrimonio->getDepartamentoid() == "") { ?>
                             <option selected="selected" disabled="disabled"></option>
+                        <?php } ?>
+                        <?php for ($i = 0; $i < count($departamentos); $i++) { ?>
+                            <option
+                            <?php if ($patrimonio->getDepartamentoid() == $departamentos[$i]->getDepartamentoid()) { ?>
+                                    selected="selected"
+                                <?php } ?>
+                                value="<?= $departamentos[$i]->getDepartamentoid() ?>"><?= $departamentos[$i]->getDepartamentonome(TRUE) ?></option>
+                            <?php } ?>
                     </select>
                     <div class="select-plus" 
                          title="Cadastrar novo departamento"
-                         data-id="departamentoselect"
+                         data-id="departamentoTolocalselect"
                          data-titulo="Cadastrar Departamento" 
-                         data-evento="departamento"
-                         data-param="situacao=novo&dialog=dialog-subform"></div>
+                         data-evento="departamento"></div>
                 </div>
             </div>
             <div class="linha-form">
                 <div class="coluna-form">
-                    <label> Estado de Conservação </label>
+                    <label> Estado de Conservação* </label>
                     <select 
                         id="estadoconservacao" 
-                        name="estadoconservacao">
-                        <option value="Não se aplica">Não se aplica</option>
-                        <option value="Excelente">Excelente</option>
-                        <option value="Bom">Bom</option>
-                        <option value="Médio">Médio</option>
-                        <option value="Mau">Mau</option>
-                        <option value="Péssimo">Péssimo</option>
+                        name="estadoconservacao"
+                        required="required">
+                        <?php if ($patrimonio->getEstadoconservacao() == "") { ?>
+                            <option selected="selected" disabled="disabled">Selecione...</option>
+                        <?php } ?>
+                            <?php for ($i = 0; $i < count($estadoconservacoes); $i++) { ?>
+                            <option
+                            <?php if ($patrimonio->getEstadoconservacao() == $estadoconservacoes[$i]) { ?>
+                                    selected="selected"
+                                <?php } ?>
+                                value="<?= $estadoconservacoes[$i] ?>"><?= $estadoconservacoes[$i] ?></option>
+                            <?php } ?>
                     </select>
                 </div>
                 <div class="coluna-form">
-                    <label> Fornecedor* </label>
+                    <label> Fornecedor </label>
                     <select 
                         id="fornecedorselect" 
                         name="fornecedorid" 
-                        title="Fornecedor do Patrimônio" 
-                        required="required" >
+                        title="Fornecedor do Patrimônio" >
                             <?php if ($patrimonio->getFornecedorid() == "") { ?>
                             <option selected="selected" disabled="disabled"></option>
                         <?php } ?>
@@ -380,13 +386,15 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
             <label> Observações </label>
             <textarea 
                 style="width: 50.5em; height: 4em;"
-                name="patrimonioobservacao" 
+                name="obs" 
                 title="Observações sobre o Patrimonio" 
                 class="text ui-widget-content ui-corner-all"><?= $patrimonio->getObs() ?></textarea>
-            <input 
-                type="hidden" 
-                name="patrimonioid" 
-                value="<?= $patrimonio->getPatrimonioid() ?>" >
+                <?php if ($situacao == "editar") { ?>
+                <input 
+                    type="hidden" 
+                    name="patrimonioid" 
+                    value="<?= $patrimonio->getPatrimonioid() ?>" >
+                <?php } ?>
             <input 
                 type="hidden" 
                 id="control"
