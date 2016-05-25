@@ -70,13 +70,31 @@ if (isset($_POST['fornecedorid'])) {
 
 //verifica se o próximo caractere após a última virgual é um número
 if (isset($_POST['patrimoniosids'])) {
-    $posvirgula = strripos($_POST['patrimoniosids'], ',');
-    if (is_numeric(substr($_POST['patrimoniosids'], $posvirgula + 1, 1))) {
 
-        $patrimonioidlote = explode(',', $_POST['patrimoniosids']);
-    } else {
+    $patrimoniosids = $_POST['patrimoniosids'];
 
-        $msg[] = "Tem alguma coisa errada nos tombamentos informados!";
+    //converte string em array
+    $patrimonioidlote = explode(',', $patrimoniosids);
+
+    //remove valores repetidos do array
+    $patrimonioidlote = array_unique($patrimonioidlote);
+
+    //Remove Valores Nulos e Falsos
+    $patrimonioidlote = array_filter($patrimonioidlote);
+
+    //recria os indices
+    $patrimonioidlote = array_values($patrimonioidlote);
+
+    $est = "";
+    for ($i = 0; $i < count($patrimonioidlote); $i++) {
+        
+        if (!is_numeric($patrimonioidlote[$i])) {
+            
+            $est = $est . $patrimonioidlote[$i] . "; ";
+        }
+    }
+    if (strlen($est) > 0) {
+        $msg[] = "Estes não são números válidos: " . $est;
     }
 }
 
@@ -92,7 +110,9 @@ switch ($control) {
 
     case 'novo': {
 
-            if (!isset($_POST['lote'])) {
+            if (isset($_POST['lote'])) {
+                
+            } else {
 
                 $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
 
