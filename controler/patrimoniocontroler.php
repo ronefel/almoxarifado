@@ -10,6 +10,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . $urlroot . '/util/autenticador.php';
 $patrimonio = new patrimonioModel();
 $msg = array();
 $control = "";
+$patrimonioidlote = "";
 
 if (isset($_POST['control']) && !empty($_POST['control'])) {
 
@@ -24,13 +25,13 @@ if (isset($_POST['produtoid'])) {
     $patrimonio->setProdutoid($_POST['produtoid']);
 }
 
-if (isset($_POST['serie'])) {
-    $patrimonio->setSerie($_POST['serie']);
-}
-
-if (isset($_POST['notafiscal'])) {
-    $patrimonio->setNotafiscal($_POST['notafiscal']);
-}
+//if (isset($_POST['serie'])) {
+//    $patrimonio->setSerie($_POST['serie']);
+//}
+//
+//if (isset($_POST['notafiscal'])) {
+//    $patrimonio->setNotafiscal($_POST['notafiscal']);
+//}
 
 if (isset($_POST['valor'])) {
     $patrimonio->setValor($_POST['valor']);
@@ -67,6 +68,18 @@ if (isset($_POST['fornecedorid'])) {
     $patrimonio->setFornecedorid($_POST['fornecedorid']);
 }
 
+//verifica se o próximo caractere após a última virgual é um número
+if (isset($_POST['patrimoniosids'])) {
+    $posvirgula = strripos($_POST['patrimoniosids'], ',');
+    if (is_numeric(substr($_POST['patrimoniosids'], $posvirgula + 1, 1))) {
+
+        $patrimonioidlote = explode(',', $_POST['patrimoniosids']);
+    } else {
+
+        $msg[] = "Tem alguma coisa errada nos tombamentos informados!";
+    }
+}
+
 switch ($control) {
 
     case 'view': {
@@ -79,24 +92,27 @@ switch ($control) {
 
     case 'novo': {
 
-            $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
-            
-            if(strlen($patrimoniodb->getPatrimonioid()) > 0){
-                $msg[] = "O tombamento informado já está cadastrado!";
-            }
+            if (!isset($_POST['lote'])) {
 
-            if ($patrimonio->getProdutoid() == "") {
+                $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
 
-                $msg[] = "Tem que selecionar um produto.<br/>";
-            }
+                if (strlen($patrimoniodb->getPatrimonioid()) > 0) {
+                    $msg[] = "O tombamento informado já está cadastrado!";
+                }
 
-            if (!count($msg) > 0) {
+                if ($patrimonio->getProdutoid() == "") {
 
-                $result = patrimonioAction::insertPatrimonio($patrimonio);
-                if ($result) {
-                    $msg[] = 'sucesso';
-                } else {
-                    $msg[] = 'Ouve um erro na hora de cadastrar o patrimonio.';
+                    $msg[] = "Tem que selecionar um produto.<br/>";
+                }
+
+                if (!count($msg) > 0) {
+
+                    $result = patrimonioAction::insertPatrimonio($patrimonio);
+                    if ($result) {
+                        $msg[] = 'sucesso';
+                    } else {
+                        $msg[] = 'Ouve um erro na hora de cadastrar o patrimonio.';
+                    }
                 }
             }
         }break;
@@ -133,8 +149,8 @@ switch ($control) {
         }break;
 
     case 'relatorio': {
-        
-        $msg[] = 'Não implementado.';
+
+            $msg[] = 'Não implementado.';
 
 //            $patrimonios = new patrimonioModel();
 //            $patrimonios = patrimonioAction::listPatrimonio();
