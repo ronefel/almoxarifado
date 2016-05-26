@@ -214,7 +214,6 @@ class patrimonioAction extends patrimonioModel {
                             F.fantazia,
                             PR.produtoid,
                             PR.nome AS produtonome,
-                            P.descricao,
                             P.serie,
                             P.valor,
                             P.datacompra,
@@ -230,12 +229,8 @@ class patrimonioAction extends patrimonioModel {
                        FROM patrimonio P
                  INNER JOIN produto PR
                          ON PR.produtoid = P.produtoid
-                  LEFT JOIN categoria C
-                         ON C.categoriaid = P.categoriaid
                   LEFT JOIN fornecedor F
                          ON F.fornecedorid = P.fornecedorid
-                  LEFT JOIN marca M
-                         ON M.marcaid = P.marcaid
                   LEFT JOIN departamento D
                          ON D.departamentoid = P.departamentoid
                   LEFT JOIN local L

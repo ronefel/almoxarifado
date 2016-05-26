@@ -67,34 +67,23 @@ if (isset($_POST['departamentoid'])) {
 if (isset($_POST['fornecedorid'])) {
     $patrimonio->setFornecedorid($_POST['fornecedorid']);
 }
-
+if (isset($_POST['lote'])) {
 //verifica se o próximo caractere após a última virgual é um número
-if (isset($_POST['patrimoniosids'])) {
+    if (isset($_POST['patrimoniosids'])) {
 
-    $patrimoniosids = $_POST['patrimoniosids'];
+        $patrimoniosids = $_POST['patrimoniosids'];
 
-    //converte string em array
-    $patrimonioidlote = explode(',', $patrimoniosids);
+        //converte string em array
+        $patrimonioidlote = explode(',', $patrimoniosids);
 
-    //remove valores repetidos do array
-    $patrimonioidlote = array_unique($patrimonioidlote);
+        //remove valores repetidos do array
+        $patrimonioidlote = array_unique($patrimonioidlote);
 
-    //Remove Valores Nulos e Falsos
-    $patrimonioidlote = array_filter($patrimonioidlote);
+        //Remove Valores Nulos e Falsos
+        $patrimonioidlote = array_filter($patrimonioidlote);
 
-    //recria os indices
-    $patrimonioidlote = array_values($patrimonioidlote);
-
-    $est = "";
-    for ($i = 0; $i < count($patrimonioidlote); $i++) {
-        
-        if (!is_numeric($patrimonioidlote[$i])) {
-            
-            $est = $est . $patrimonioidlote[$i] . "; ";
-        }
-    }
-    if (strlen($est) > 0) {
-        $msg[] = "Estes não são números válidos: " . $est;
+        //recria os indices
+        $patrimonioidlote = array_values($patrimonioidlote);
     }
 }
 
@@ -110,13 +99,69 @@ switch ($control) {
 
     case 'novo': {
 
+            //cadastra vários patrimônios de uma só vez
             if (isset($_POST['lote'])) {
-                
+
+                $est = "";
+                for ($i = 0; $i < count($patrimonioidlote); $i++) {
+
+                    //verifica se é um número válido
+                    if (!is_numeric($patrimonioidlote[$i])) {
+
+                        $est = $est . $patrimonioidlote[$i] . "; ";
+                    } else {
+
+                        $patrimoniodb = new patrimonioModel();
+                        $patrimonio->setPatrimonioid($patrimonioidlote[$i]);
+                        $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
+
+                        //verifica se o patrimônio informado já está cadastrado
+                        if (strlen($patrimoniodb->getPatrimonioid()) > 0) {
+
+                            $msg[0] = "Este(s) tombamento(s) já está(ão) cadastrado(s):<br/>";
+                            $msg[] = $patrimonioidlote[$i] . ", ";
+                        }
+                    }
+                }
+                if (strlen($est) > 0) {
+
+                    $msg[] = "Estes não são números válidos: " . $est;
+                }
+                if ($patrimonio->getProdutoid() == "") {
+
+                    $msg[] = "Tem que selecionar um produto.<br/>";
+                }
+
+                if (!count($msg) > 0) {
+
+                    for ($i = 0; $i < count($patrimonioidlote); $i++) {
+
+                        $patrimonio->setPatrimonioid($patrimonioidlote[$i]);
+
+                        $result = patrimonioAction::insertPatrimonio($patrimonio);
+                        if ($result) {
+
+                            $msg[0] = 'sucesso';
+                        } else {
+
+                            $msg[0] = 'Ouve um erro na hora de cadastrar este(s) patrimonio(s):';
+                            $msg[] = $patrimonioidlote[$i] . "<br/>";
+                        }
+                    }
+                }
             } else {
 
-                $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
+                $patrimoniodb = new patrimonioModel();
+                if (strlen($patrimonio->getPatrimonioid()) > 0) {
+
+                    $patrimoniodb = patrimonioAction::getPatrimonio($patrimonio);
+                } else {
+
+                    $msg[] = "O campo 'patrimônio' não pode ser vazio!";
+                }
 
                 if (strlen($patrimoniodb->getPatrimonioid()) > 0) {
+
                     $msg[] = "O tombamento informado já está cadastrado!";
                 }
 

@@ -146,14 +146,16 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 
     <form id="patrimonioform">
         <fieldset>
-            <div class="linha-form" style="height: 3em;">
-                <div class="coluna-form">
-                    <input id="lote"
-                           name="lote"
-                           type="checkbox">                    
-                    <label for="lote">Cadastrar em Lote</label>
+            <?php if ($situacao == "novo") { ?>
+                <div class="linha-form" style="height: 3em;">
+                    <div class="coluna-form">
+                        <input id="lote"
+                               name="lote"
+                               type="checkbox">                    
+                        <label for="lote">Cadastrar em Lote</label>
+                    </div>
                 </div>
-            </div>
+            <?php } ?>
             <div class="linha-form">
                 <div id="divpatrimonioid" class="coluna-form">
                     <label> Tombamento* </label>
@@ -173,15 +175,17 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                         value="<?= $patrimonio->getPatrimonioid(TRUE) ?>"
                         autofocus="true">
                 </div>
-                <div id="divlote" class="coluna-form" style="display: none;">
-                    <label> Tombamentos* <span class="ui-state-default" style="font-size: 12px;">ATENÇÃO: Digite os tombamentos separados por vírgula sem espaço ex: 11111,22222,33333</span></label>
-                    <textarea 
-                        id="patrimoniosids"
-                        style="width: 42em; height: 2em;"
-                        name="patrimoniosids" 
-                        title="Cadastre vários tombamentos de uma só vez" 
-                        class="text ui-widget-content ui-corner-all"><?= $patrimonio->getObs() ?></textarea>
-                </div>
+                <?php if ($situacao == "novo") { ?>
+                    <div id="divlote" class="coluna-form" style="display: none;">
+                        <label> Tombamentos* <span class="ui-state-default" style="font-size: 12px;">ATENÇÃO: Digite os tombamentos separados por vírgula sem espaço ex: 11111,22222,33333</span></label>
+                        <textarea 
+                            id="patrimoniosids"
+                            style="width: 42em; height: 2em;"
+                            name="patrimoniosids" 
+                            title="Cadastre vários tombamentos de uma só vez" 
+                            class="text ui-widget-content ui-corner-all"><?= $patrimonio->getObs() ?></textarea>
+                    </div>
+                <?php } ?>
             </div>
             <div class="linha-form">
                 <div class="coluna-form">
@@ -270,29 +274,29 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 </div>
             </div>
             <div class="linha-form">
-<!--                <div class="coluna-form">
-                    <label> Número de Série </label>
-                    <input 
-                        type="text" 
-                        name="serie" 
-                        title="Número de Série do patrimônio" 
-                        style="width: 100px;"
-                        maxlength="20"
-                        class="text ui-widget-content ui-corner-all" 
-                        value="<?= $patrimonio->getSerie(TRUE) ?>">
-                </div>-->
-<!--                <div class="coluna-form">
-                    <label> Nota Fiscal </label>
-                    <input 
-                        id="notafiscal"
-                        type="text" 
-                        name="notafiscal" 
-                        title="Nota Fiscal do Patrimonio" 
-                        style="width: 100px;"
-                        maxlength="20"
-                        class="text ui-widget-content ui-corner-all" 
-                        value="<?= $patrimonio->getNotafiscal(TRUE) ?>">
-                </div>-->
+                <!--                <div class="coluna-form">
+                                    <label> Número de Série </label>
+                                    <input 
+                                        type="text" 
+                                        name="serie" 
+                                        title="Número de Série do patrimônio" 
+                                        style="width: 100px;"
+                                        maxlength="20"
+                                        class="text ui-widget-content ui-corner-all" 
+                                        value="<?= $patrimonio->getSerie(TRUE) ?>">
+                                </div>-->
+                <!--                <div class="coluna-form">
+                                    <label> Nota Fiscal </label>
+                                    <input 
+                                        id="notafiscal"
+                                        type="text" 
+                                        name="notafiscal" 
+                                        title="Nota Fiscal do Patrimonio" 
+                                        style="width: 100px;"
+                                        maxlength="20"
+                                        class="text ui-widget-content ui-corner-all" 
+                                        value="<?= $patrimonio->getNotafiscal(TRUE) ?>">
+                                </div>-->
                 <div class="coluna-form">
                     <label> Estado de Conservação* </label>
                     <select 
