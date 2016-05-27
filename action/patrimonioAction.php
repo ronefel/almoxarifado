@@ -266,6 +266,119 @@ class patrimonioAction extends patrimonioModel {
         return $patrimonio;
     }
 
+    public static function searchPatrimonio($filters) {
+
+        $sql = "     SELECT P.patrimonioid,
+                            P.fornecedorid,
+                            F.fantazia,
+                            PR.produtoid,
+                            PR.nome AS produtonome,
+                            P.serie,
+                            P.valor,
+                            P.datacompra,
+                            P.notafiscal,
+                            P.fimgarantia,
+                            P.dataimplantacao,
+                            P.estadoconservacao,
+                            P.obs,
+                            P.departamentoid,
+                            D.nome AS departamentonome,
+                            L.localid,
+                            L.nome AS localnome
+                       FROM patrimonio P
+                 INNER JOIN produto PR
+                         ON PR.produtoid = P.produtoid
+                  LEFT JOIN fornecedor F
+                         ON F.fornecedorid = P.fornecedorid
+                  LEFT JOIN departamento D
+                         ON D.departamentoid = P.departamentoid
+                  LEFT JOIN local L
+                         ON L.localid = D.localid";
+        
+        $where = "";
+        $args = array();
+
+        if (strlen($filters->patrimonioid) > 0) {
+
+            $where .= ' AND P.patrimonioid = ? ';
+            $args[] = $filters->patrimonioid;
+        }
+
+        if (strlen($filters->produtoid) > 0) {
+
+            $where .= ' AND PR.produtoid = ? ';
+            $args[] = $filters->produtoid;
+        }
+
+        if (strlen($filters->departamentoid) > 0) {
+
+            $where .= ' AND D.departamentoid = ? ';
+            $args[] = $filters->departamentoid;
+        }
+
+        if (strlen($filters->localid) > 0) {
+
+            $where .= ' AND L.localid = ? ';
+            $args[] = $filters->localid;
+        }
+
+        if (strlen($filters->datacomprainicial) > 0 && strlen($filters->datacomprafinal) > 0) {
+
+            $where .= ' AND P.datacompra BETWEEN ? AND ? ';
+            $args[] = $filters->datacomprainicial;
+            $args[] = $filters->datacomprafinal;
+        }
+
+        if (strlen($filters->dataimplantacaoinicial) > 0 && strlen($filters->dataimplantacaofinal) > 0) {
+
+            $where .= ' AND P.dataimplantacao BETWEEN ? AND ? ';
+            $args[] = $filters->dataimplantacaoinicial;
+            $args[] = $filters->dataimplantacaofinal;
+        }
+
+        if (strlen($filters->fimgarantiainicial) > 0 && strlen($filters->fimgarantiafinal) > 0) {
+
+            $where .= ' AND P.fimgarantia BETWEEN ? AND ? ';
+            $args[] = $filters->fimgarantiainicial;
+            $args[] = $filters->fimgarantiafinal;
+        }
+
+        if (strlen($where) > 0) {
+            $sql .= ' WHERE ' . substr($where, 4);
+        }
+
+        $sql .= ' ORDER BY PR.nome';
+
+        $result = Transaction::runPrepare($sql, $args);
+
+        $arrayPatrimonio = array();
+
+        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+
+            $patrimonio = new patrimonioModel();
+            $patrimonio->setPatrimonioid($row['patrimonioid']);
+            $patrimonio->setFornecedorid($row['fornecedorid']);
+            $patrimonio->setFantazia($row['fantazia']);
+            $patrimonio->setProdutoid($row['produtoid']);
+            $patrimonio->setProdutonome($row['produtonome']);
+            $patrimonio->setSerie($row['serie']);
+            $patrimonio->setValor($row['valor']);
+            $patrimonio->setDatacompra($row['datacompra']);
+            $patrimonio->setNotafiscal($row['notafiscal']);
+            $patrimonio->setFimgarantia($row['fimgarantia']);
+            $patrimonio->setDataimplantacao($row['dataimplantacao']);
+            $patrimonio->setEstadoconservacao($row['estadoconservacao']);
+            $patrimonio->setObs($row['obs']);
+            $patrimonio->setDepartamentoid($row['departamentoid']);
+            $patrimonio->setDepartamentonome($row['departamentonome']);
+            $patrimonio->setLocalid($row['localid']);
+            $patrimonio->setLocalnome($row['localnome']);
+            array_push($arrayPatrimonio, $patrimonio);
+        }
+
+        return $arrayPatrimonio;
+    }
+
 }
 
 ?>

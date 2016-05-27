@@ -68,6 +68,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 </style>
 
 <div id="patrimoniobody">
+    <?php include_once '../script.php'; ?>
     <script>
         $(function () {
 
@@ -96,7 +97,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 }
             });
 
-            $("#datacompra, #dataimplantacao, #fimgarantia").datepicker({
+            $(".data").datepicker({
                 dateFormat: "dd/mm/yy"
             });
 
@@ -129,25 +130,25 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 tips.html(t).addClass("ui-state-error");
             }
 
-            $("#bpatrimoniosubmit").click(function () {
-                $.ajax({
-                    type: "POST",
-                    url: "<?= $urlroot ?>/controler/patrimoniocontroler.php",
-                    data: $("#patrimonioform").serialize(),
-                    dataType: "text",
-                    cache: false,
-                    success: function (html) {
-                        if (html !== "sucesso") {
-                            updateTips(html);
-                        } else {
-                            $("#dialog-form").dialog('close');
-                            setTimeout(function () {
-                                carregarIndex(pagina);
-                            }, 1);
-                        }
-                    }
-                });
-            });
+//            $("#bpatrimoniosubmit").click(function () {
+//                $.ajax({
+//                    type: "POST",
+//                    url: "<?= $urlroot ?>/controler/patrimoniocontroler.php",
+//                    data: $("#patrimonioform").serialize(),
+//                    dataType: "text",
+//                    cache: false,
+//                    success: function (html) {
+//                        if (html !== "sucesso") {
+//                            updateTips(html);
+//                        } else {
+//                            $("#dialog-form").dialog('close');
+//                            setTimeout(function () {
+//                                carregarIndex(pagina);
+//                            }, 1);
+//                        }
+//                    }
+//                });
+//            });
 
             $("#bpatrimoniolimpar").button({
                 icons: {primary: "ui-icon-closethick"}
@@ -160,7 +161,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
     </script>
     <div class="toolbar" style="font-size: 1.3em;"><b>Relatório de Patrimônios</b></div>
 
-    <form id="patrimonioreportform">
+    <form id="formsearch">
         <fieldset>
             <table class="tablereport">
                 <tr>
@@ -174,9 +175,9 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                                 Limpar
                             </button>
                             <button 
-                                id="bpatrimoniosubmit" 
-                                type="submit" 
-                                role="button">
+                                id="bimprimirfiltro" 
+                                data-evento="patrimonio" 
+                                data-titulo="Relatório de Patrimônio">
                                 Gerar Relatório
                             </button>
                         </div>
@@ -208,7 +209,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             name="produtoid" 
                             title="Produto do Patrimônio" >
                                 <?php if ($patrimonio->getProdutoid() == "") { ?>
-                                <option selected="selected" disabled="disabled"></option>
+                                <option selected="selected">Selecione...</option>
                             <?php } ?>
                             <?php for ($i = 0; $i < count($produtos); $i++) { ?>
                                 <option
@@ -230,7 +231,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             name="localid" 
                             title="Local do Patrimônio" >
                                 <?php if ($patrimonio->getLocalid() == "") { ?>
-                                <option selected="selected" disabled="disabled"></option>
+                                <option selected="selected">Selecione...</option>
                             <?php } ?>
                             <?php for ($i = 0; $i < count($locais); $i++) { ?>
                                 <option
@@ -252,7 +253,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             name="departamentoid" 
                             title="Departamento do Patrimônio" >
                                 <?php if ($patrimonio->getDepartamentoid() == "") { ?>
-                                <option selected="selected" disabled="disabled">Selecione um local</option>
+                                <option selected="selected">Selecione um local</option>
                             <?php } ?>
                             <?php for ($i = 0; $i < count($departamentos); $i++) { ?>
                                 <option
@@ -274,7 +275,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                             name="fornecedorid" 
                             title="Fornecedor do Patrimônio" >
                                 <?php if ($patrimonio->getFornecedorid() == "") { ?>
-                                <option selected="selected" disabled="disabled"></option>
+                                <option selected="selected">Selecione...</option>
                             <?php } ?>
                             <?php for ($i = 0; $i < count($fornecedores); $i++) { ?>
                                 <option
@@ -293,10 +294,9 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td colspan="3">
                         <select 
                             id="estadoconservacao" 
-                            name="estadoconservacao"
-                            required="required">
+                            name="estadoconservacao">
                                 <?php if ($patrimonio->getEstadoconservacao() == "") { ?>
-                                <option selected="selected" disabled="disabled">Selecione...</option>
+                                <option selected="selected">Selecione...</option>
                             <?php } ?>
                             <?php for ($i = 0; $i < count($estadoconservacoes); $i++) { ?>
                                 <option
@@ -315,12 +315,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td style="width: 0px;">
                         <input 
                             type="text" 
-                            name="datacompra" 
-                            id="datacompra"
+                            name="datacomprainicial" 
                             title="Data de compra do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all data" 
                             value="<?= $patrimonio->getDatacompra(TRUE) ?>">
                     </td>
                     <td style="width: 0px;">
@@ -329,12 +328,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td>
                         <input 
                             type="text" 
-                            name="datacompra" 
-                            id="datacompra"
+                            name="datacomprafinal" 
                             title="Data de compra do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all data" 
                             value="<?= $patrimonio->getDatacompra(TRUE) ?>">
                     </td>
                 </tr>
@@ -345,12 +343,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td>
                         <input 
                             type="text" 
-                            name="dataimplantacao" 
-                            id="dataimplantacao"
+                            name="dataimplantacaoinicial" 
                             title="Data de implantação do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all data" 
                             value="<?= $patrimonio->getDataimplantacao(TRUE) ?>">
                     </td>
                     <td>
@@ -359,12 +356,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td>
                         <input 
                             type="text" 
-                            name="datacompra" 
-                            id="datacompra"
+                            name="dataimplantacaofinal"
                             title="Data de compra do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all data" 
                             value="<?= $patrimonio->getDatacompra(TRUE) ?>">
                     </td>   
                 </tr>
@@ -375,12 +371,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td>
                         <input 
                             type="text" 
-                            name="fimgarantia" 
-                            id="fimgarantia"
+                            name="fimgarantiainicial" 
                             title="Data de implantação do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all data" 
                             value="<?= $patrimonio->getFimgarantia(TRUE) ?>">
                     </td>
                     <td>
@@ -389,21 +384,26 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                     <td>
                         <input 
                             type="text" 
-                            name="datacompra" 
-                            id="datacompra"
+                            name="fimgarantiafinal" 
                             title="Data de compra do patrimônio" 
                             style="width: 100px;"
                             maxlength="20"
-                            class="text ui-widget-content ui-corner-all" 
+                            class="text ui-widget-content ui-corner-all  data" 
                             value="<?= $patrimonio->getDatacompra(TRUE) ?>">
                     </td>
                 </tr>
-            </table>
-            <input 
-                type="hidden" 
-                id="control"
-                name="control" 
-                value="relatorio" >
-        </fieldset>
-    </form>
-</div>
+                <tr>
+                    <td> <label>Exibir observações: <label> </td>
+                                <td colspan="3">
+                                    <input type="checkbox" name="exibeobs" style="position: absolute; margin-top: -16px;">
+                                </td>
+                                </tr>
+                                </table>
+                                <input 
+                                    type="hidden" 
+                                    id="control"
+                                    name="control" 
+                                    value="relatorio" >
+                                </fieldset>
+                                </form>
+                                </div>

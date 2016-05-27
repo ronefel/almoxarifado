@@ -25,14 +25,6 @@ if (isset($_POST['produtoid'])) {
     $patrimonio->setProdutoid($_POST['produtoid']);
 }
 
-//if (isset($_POST['serie'])) {
-//    $patrimonio->setSerie($_POST['serie']);
-//}
-//
-//if (isset($_POST['notafiscal'])) {
-//    $patrimonio->setNotafiscal($_POST['notafiscal']);
-//}
-
 if (isset($_POST['valor'])) {
     $patrimonio->setValor($_POST['valor']);
 }
@@ -212,31 +204,109 @@ switch ($control) {
                 $msg[] = $result;
             }
         }break;
-    case 'report': {
-            
-            include_once '../form/relatorio/patrimonioreportform.php';
-        
-        }break;
+
     case 'relatorio': {
 
-            $msg[] = 'Não implementado.';
+            $filters = new stdClass();
 
-//            $patrimonios = new patrimonioModel();
-//            $patrimonios = patrimonioAction::listPatrimonio();
+//            if (isset($_POST['operacao'])) {
+//                $operacao = $_POST['operacao'];
+//                for ($i = 0; $i < count($operacao); $i++) {
 //
-//            if (count($patrimonios) > 0) {
-//                $estoquetotal = 0.0;
-//
-//                ob_start();
-//                include_once "../report/relatorio/patrimonio.php";
-//                $relatorio = ob_get_clean();
-//
-//                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios");
+//                    $filters->operacao[$i] = $operacao[$i];
+//                }
 //            } else {
-//                $msg[] = 'erro=Nenhum patrimonio cadastrado.';
+//                $filters->operacao = "";
 //            }
+            
+            if (strlen($patrimonio->getPatrimonioid()) > 0) {
+                $filters->patrimonioid = $patrimonio->getPatrimonioid();
+            } else {
+                $filters->patrimonioid = "";
+            }
+            
+            if (strlen($patrimonio->getProdutoid()) > 0) {
+                $filters->produtoid = $patrimonio->getProdutoid();
+            } else {
+                $filters->produtoid = "";
+            }
+            
+            if (strlen($patrimonio->getDepartamentoid()) > 0) {
+                $filters->departamentoid = $patrimonio->getDepartamentoid();
+            } else {
+                $filters->departamentoid = "";
+            }
+            
+            if (isset($_POST['localid'])) {
+                $filters->localid = $_POST['localid'];
+            } else {
+                $filters->localid = "";
+            }
+            
+            if (isset($_POST['datacomprainicial'])) {
+                $filters->datacomprainicial = $_POST['datacomprainicial'];
+            } else {
+                $filters->datacomprainicial = "";
+            }
+            
+            if (isset($_POST['datacomprafinal'])) {
+                $filters->datacomprafinal = $_POST['datacomprafinal'];
+            } else {
+                $filters->datacomprafinal = "";
+            }
+            
+            if (isset($_POST['dataimplantacaoinicial'])) {
+                $filters->dataimplantacaoinicial = $_POST['dataimplantacaoinicial'];
+            } else {
+                $filters->dataimplantacaoinicial = "";
+            }
+            
+            if (isset($_POST['dataimplantacaofinal'])) {
+                $filters->dataimplantacaofinal = $_POST['dataimplantacaofinal'];
+            } else {
+                $filters->dataimplantacaofinal = "";
+            }
+            
+            if (isset($_POST['fimgarantiainicial'])) {
+                $filters->fimgarantiainicial = $_POST['fimgarantiainicial'];
+            } else {
+                $filters->fimgarantiainicial = "";
+            }
+            
+            if (isset($_POST['fimgarantiafinal'])) {
+                $filters->fimgarantiafinal = $_POST['fimgarantiafinal'];
+            } else {
+                $filters->fimgarantiafinal = "";
+            }
+            
+            if (isset($_POST['exibeobs'])) {
+                $filters->exibeobs = $_POST['exibeobs'];
+            } else {
+                $filters->exibeobs = "";
+            }
+
+            $patrimonios = new patrimonioModel();
+            $patrimonios = patrimonioAction::searchPatrimonio($filters);
+            
+            if (count($patrimonios) > 0) {
+
+                ob_start();
+                include_once "../report/relatorio/patrimonio.php";
+                $relatorio = ob_get_clean();
+
+                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios");
+            } else {
+                $msg[] = 'erro=Não foram encontrados registros para a geração deste documento.';
+            }
         }break;
+        
+    case 'report': {
+
+            include_once '../form/relatorio/patrimonioreportform.php';
+        }break;
+    
 }
+
 if (count($msg) > 0) {
     foreach ($msg AS $s) {
         echo $s;

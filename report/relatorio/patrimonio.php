@@ -47,7 +47,7 @@
                 <table width="100%">
                     <tr>
                         <td width="25%"><img src="../report/css/imagens/logo.jpg"></td>
-                        <td width="75%"><br/><span style="font-size: 16pt;">Almoxarifado</span><br/><span style="font-size: 16pt; font-weight: bold; ">Relatório de Estoque</span></td>
+                        <td width="75%"><br/><span style="font-size: 16pt;">Almoxarifado</span><br/><span style="font-size: 16pt; font-weight: bold; ">Relatório de Patrimônio</span></td>
                     </tr>
                 </table>
             </htmlpageheader>
@@ -67,46 +67,30 @@
             <table class="items" width="100%" style="border-collapse: collapse;" cellpadding="8">
                 <thead>
                     <tr>
-                        <th width="10%">Código</th>
-                        <th width="48%">Descrição</th>
-                        <th width="8%">Unid.</th>
-                        <th width="8%">Mín.</th>
-                        <th width="8%">Máx.</th>
-                        <th width="18%">Estoque Atual</th>
+                        <th width="10%">Tomb.</th>
+                        <th width="45%">Produto</th>
+                        <th width="25%">Local - Departamento</th>
+                        <th width="20%">Estado Conservação</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- ITEMS HERE -->
-                    <?php
-                    for ($i = 0; $i < count($patrimonios); $i++) {
-                        $estoquetotal += $patrimonios[$i]->getEstoqueatual();
-                        ?>
+                    <?php for ($i = 0; $i < count($patrimonios); $i++) { ?>
                         <tr>
-                            <td style="text-align: right;">
+                            <td>
                                 <?= $patrimonios[$i]->getPatrimonioid() ?>
                             </td>
                             <td>
-                                <?= $patrimonios[$i]->getPatrimoniodescricao(TRUE) ?>
+                                <?= $patrimonios[$i]->getProdutonome(TRUE) ?>
                             </td>
-                            <td style="text-align: center;">
-                                <?= $patrimonios[$i]->getUnd(TRUE) ?>
+                            <td>
+                                <?= $patrimonios[$i]->getLocalnome(TRUE) ?> - <?= $patrimonios[$i]->getDepartamentonome(TRUE) ?>
                             </td>
-                            <td style="text-align: right;">
-                                <?= $patrimonios[$i]->getEstoqueminimo("form") ?>
-                            </td>
-                            <td style="text-align: right;">
-                                <?= $patrimonios[$i]->getEstoquemaximo("form") ?>
-                            </td>
-                            <td style="text-align: right;">
-                                <?= $patrimonios[$i]->getEstoqueatual("form") ?>
+                            <td>
+                                <?= $patrimonios[$i]->getEstadoconservacao(TRUE) ?>
                             </td>
                         </tr>
                     <?php } ?>
-                    <tr>
-                        <td class="blanktotal" colspan="3" rowspan="1"></td>
-                        <td class="totals" colspan="2">Total Geral:</td>
-                        <td class="totals"><?= number_format($estoquetotal, 3, ',', '') ?></td>
-                    </tr>
                 </tbody>
             </table>
         </body>
