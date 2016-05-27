@@ -212,7 +212,11 @@ switch ($control) {
                 $msg[] = $result;
             }
         }break;
-
+    case 'report': {
+            
+            include_once '../form/relatorio/patrimonioreportform.php';
+        
+        }break;
     case 'relatorio': {
 
             $msg[] = 'Não implementado.';

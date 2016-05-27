@@ -27,11 +27,15 @@ if (Sessao::existe('usuario')) {
 
             //carrega a pagina solicitada no menu
             function carregarIndex(pagina, param) {
+                var data = {"control": "view"};
+             if(param !== undefined){
+                 data = param;
+             }
                 $.ajax({
                     type: "POST",
                     url: "<?= $urlroot ?>/controler/" + pagina + "controler.php",
                     dataType: "html",
-                    data: {"control": "view"},
+                    data: data,
                     cache: false,
                     success: function (html) {
                         $("#index-body").html(html);
@@ -234,7 +238,7 @@ if (Sessao::existe('usuario')) {
                     pagina = $(this).attr("id");
                     select = "";
                     var control = $(this).attr("data-control");
-                    var param = {control: control};
+                    var param = {"control": control};
                     carregarIndex(pagina, param);
                 });
 
@@ -377,24 +381,7 @@ if (Sessao::existe('usuario')) {
                 <li class="lastmenu" id="patrimonio" data-control="view">Patrimônio</li>
                 <li>Relatórios
                     <ul>
-                        <li class="report" data-event="movimento" data-title="Relatório de Movimentações">
-                            Relatório de Movimentações
-                        </li>
-                        <li class="report" data-event="produto" data-title="Relatório de Estoque">
-                            Relatório de Estoque
-                        </li>
-                        <li>
-                            Relatório de Entradas
-                        </li>
-                        <li>
-                            Relatório de Saídas
-                        </li>
-                        <li>
-                            Relatório de Requisições
-                        </li>
-                        <li>
-                            Relatório de Compras
-                        </li>
+                        <li class="lastmenu" id="patrimonio" data-control="report">Relatório de Patrimônios</li>
                     </ul>
                 </li>
                 <li>Configuração
