@@ -59,20 +59,21 @@ class util {
         return mktime(date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
     }
 
-    public static function gerarPDF($relatorio, $titulo) {
+    public static function gerarPDF($relatorio, $titulo, $pagina="A4") {
 
         require_once "../report/mPDF/mpdf60/mpdf.php";
 
         $time = util::getTime();
 
         //(charset, formato, '', '', left,right,top,bottom,header,footer)
-        $mpdf = new mPDF('UTF-8', 'A4', '', '', 10, 8, 28, 10, 5, 3);
+        $mpdf = new mPDF('UTF-8', $pagina, '', '', 10, 8, 28, 10, 5, 3);
         $mpdf->useOnlyCoreFonts = true;    // false is default
         $mpdf->SetProtection(array('print'));
         $mpdf->SetTitle($titulo);
         $mpdf->SetDisplayMode('fullpage');
         $mpdf->WriteHTML($relatorio);
         $mpdf->Output("../report/tmp/{$time}.pdf", "F");
+        $mpdf->displayDefaultOrientation = true;
 
         if (file_exists("../report/tmp/{$time}.pdf")) {
 

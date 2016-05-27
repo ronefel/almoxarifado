@@ -18,11 +18,15 @@ if (isset($_POST['control']) && !empty($_POST['control'])) {
 }
 
 if (isset($_POST['patrimonioid'])) {
-    $patrimonio->setPatrimonioid($_POST['patrimonioid']);
+    if (is_numeric($_POST['patrimonioid'])) {
+        $patrimonio->setPatrimonioid($_POST['patrimonioid']);
+    }
 }
 
 if (isset($_POST['produtoid'])) {
-    $patrimonio->setProdutoid($_POST['produtoid']);
+    if (is_numeric($_POST['produtoid'])) {
+        $patrimonio->setProdutoid($_POST['produtoid']);
+    }
 }
 
 if (isset($_POST['valor'])) {
@@ -53,11 +57,15 @@ if (isset($_POST['patrimonioativo'])) {
 }
 
 if (isset($_POST['departamentoid'])) {
-    $patrimonio->setDepartamentoid($_POST['departamentoid']);
+    if (is_numeric($_POST['departamentoid'])) {
+        $patrimonio->setDepartamentoid($_POST['departamentoid']);
+    }
 }
 
 if (isset($_POST['fornecedorid'])) {
-    $patrimonio->setFornecedorid($_POST['fornecedorid']);
+    if (is_numeric($_POST['fornecedorid'])) {
+        $patrimonio->setFornecedorid($_POST['fornecedorid']);
+    }
 }
 if (isset($_POST['lote'])) {
 //verifica se o próximo caractere após a última virgual é um número
@@ -218,93 +226,94 @@ switch ($control) {
 //            } else {
 //                $filters->operacao = "";
 //            }
-            
+
             if (strlen($patrimonio->getPatrimonioid()) > 0) {
                 $filters->patrimonioid = $patrimonio->getPatrimonioid();
             } else {
                 $filters->patrimonioid = "";
             }
-            
+
             if (strlen($patrimonio->getProdutoid()) > 0) {
                 $filters->produtoid = $patrimonio->getProdutoid();
             } else {
                 $filters->produtoid = "";
             }
-            
+
             if (strlen($patrimonio->getDepartamentoid()) > 0) {
                 $filters->departamentoid = $patrimonio->getDepartamentoid();
             } else {
                 $filters->departamentoid = "";
             }
-            
-            if (isset($_POST['localid'])) {
+
+            if (isset($_POST['localid']) && is_numeric($_POST['localid'])) {
                 $filters->localid = $_POST['localid'];
             } else {
                 $filters->localid = "";
             }
-            
+
             if (isset($_POST['datacomprainicial'])) {
                 $filters->datacomprainicial = $_POST['datacomprainicial'];
             } else {
                 $filters->datacomprainicial = "";
             }
-            
+
             if (isset($_POST['datacomprafinal'])) {
                 $filters->datacomprafinal = $_POST['datacomprafinal'];
             } else {
                 $filters->datacomprafinal = "";
             }
-            
+
             if (isset($_POST['dataimplantacaoinicial'])) {
                 $filters->dataimplantacaoinicial = $_POST['dataimplantacaoinicial'];
             } else {
                 $filters->dataimplantacaoinicial = "";
             }
-            
+
             if (isset($_POST['dataimplantacaofinal'])) {
                 $filters->dataimplantacaofinal = $_POST['dataimplantacaofinal'];
             } else {
                 $filters->dataimplantacaofinal = "";
             }
-            
+
             if (isset($_POST['fimgarantiainicial'])) {
                 $filters->fimgarantiainicial = $_POST['fimgarantiainicial'];
             } else {
                 $filters->fimgarantiainicial = "";
             }
-            
+
             if (isset($_POST['fimgarantiafinal'])) {
                 $filters->fimgarantiafinal = $_POST['fimgarantiafinal'];
             } else {
                 $filters->fimgarantiafinal = "";
             }
-            
+
+            $pagina = "A4";
+            $obs = FALSE;
             if (isset($_POST['exibeobs'])) {
-                $filters->exibeobs = $_POST['exibeobs'];
-            } else {
-                $filters->exibeobs = "";
+                $pagina = "A4-L";
+                $obs = TRUE;
             }
+
 
             $patrimonios = new patrimonioModel();
             $patrimonios = patrimonioAction::searchPatrimonio($filters);
-            
+
             if (count($patrimonios) > 0) {
 
                 ob_start();
                 include_once "../report/relatorio/patrimonio.php";
                 $relatorio = ob_get_clean();
 
-                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios");
+                $msg[] = util::gerarPDF($relatorio, "Relatório de Patrimonios", $pagina);
             } else {
                 $msg[] = 'erro=Não foram encontrados registros para a geração deste documento.';
             }
         }break;
-        
+
     case 'report': {
 
             include_once '../form/relatorio/patrimonioreportform.php';
         }break;
-    
 }
 
 if (count($msg) > 0) {
