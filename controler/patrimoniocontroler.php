@@ -314,6 +314,7 @@ switch ($control) {
 
             include_once '../form/relatorio/patrimonioreportform.php';
         }break;
+
 }
 
 if (count($msg) > 0) {

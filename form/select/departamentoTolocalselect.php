@@ -10,16 +10,22 @@ while (!file_exists($arq)) {
 require_once $_SERVER['DOCUMENT_ROOT'] . $urlroot . '/action/departamentoAction.php';
 $departamentos = array(new departamentoModel());
 $id = "";
-if (isset($_GET['id']) && $_GET['id'] != "") {
+if (isset($_GET['id']) && $_GET['id'] != "" && is_numeric($_GET['id'])) {
+
     $id = $_GET['id'];
     $departamentos = departamentoAction::listdepartamentoTolocal($id);
-} else {
-    $departamentos = departamentoAction::listDepartamento();
 }
-if ($id == "" || !$departamentos) {
+if ($id == "") {
     ?>
+
+    <option selected="selected">Selecione um local</option>
+
+<?php } elseif (!$departamentos) { ?>
     <option selected="selected" disabled="disabled">Este Local não possui Departamento vinculado</option>
-<?php } ?>
-<?php for ($i = 0; $i < count($departamentos); $i++) { ?>
-    <option value="<?= $departamentos[$i]->getDepartamentoid() ?>"><?= $departamentos[$i]->getDepartamentonome(TRUE) ?></option>
-<?php } ?>
+<?php } else { ?>
+    <?php for ($i = 0; $i < count($departamentos); $i++) { ?>
+        <option value="<?= $departamentos[$i]->getDepartamentoid() ?>"><?= $departamentos[$i]->getDepartamentonome(TRUE) ?></option>
+        <?php
+    }
+}
+?>

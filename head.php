@@ -14,7 +14,8 @@ if (Sessao::existe('usuario')) {
 
 <title>FAROL - Almoxarifado</title>
 <meta name=viewport content="width=device-width, initial-scale=1">
-<meta content="images/farol-icon2.png" itemprop="image"/>
+<meta content="imagens/farol-icon2.png" itemprop="image"/>
+<link href='imagens/farol-icon2.png' rel='icon' type='image/x-icon' /> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="js/jquery-1.11.2.min.js"></script>
 <script src="themes/<?= $tema ?>/jquery-ui.min.js"></script>
