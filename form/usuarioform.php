@@ -37,10 +37,10 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
 
 <div id="usuariobody">
     <script>
-        $(function() {
+        $(function () {
 
-            $("#departamentoTolocalselect").selectmenu({width: '40.5em'}).selectmenu("menuWidget").addClass("overflow");
-            $("#localselect").selectmenu({width: '40.5em'}).selectmenu("menuWidget").addClass("overflow");
+            $("#departamentoTolocalselect").combobox();
+            $("#localselect").combobox();
             $("#tipousuario").selectmenu({width: '15.6em'});
             $("#usuarioativo").selectmenu({width: '8em'});
             $("#busuariosubmit").button({
@@ -51,17 +51,19 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 text: false
             });
             $(".select-plus .ui-button-text").css("padding", "1.05em");
-            
+
             localid = "";
 
-            $("#localselect").on("selectmenuselect", function() {
-                if ($("#localselect").val() !== localid) {
-                    localid = $("#localselect").val();
-                    carregarSelect("departamentoTolocalselect", localid);
+            $("#localselect").combobox({
+                select: function (event, ui) {
+                    if ($("#localselect").val() !== localid) {
+                        localid = $("#localselect").val();
+                        carregarSelect("departamentoTolocalselect", localid);
+                    }
                 }
             });
 
-            $(".select-plus").click(function() {
+            $(".select-plus").click(function () {
                 var event = $(this).attr("data-evento");
                 var title = $(this).attr("data-titulo");
                 var param = {"localid": $("#localselect").val(), "situacao": "novo"};
@@ -76,19 +78,19 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 tips.html(t).addClass("ui-state-error");
             }
 
-            $("#busuariosubmit").click(function() {
+            $("#busuariosubmit").click(function () {
                 $.ajax({
                     type: "POST",
                     url: "<?= $urlroot ?>/controler/usuariocontroler.php",
                     data: $("#usuarioform").serialize(),
                     dataType: "text",
                     cache: false,
-                    success: function(html) {
+                    success: function (html) {
                         if (html !== "sucesso") {
                             updateTips(html);
                         } else {
                             $("#dialog-form").dialog('close');
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 carregarIndex(pagina);
                             }, 1);
                         }
@@ -99,7 +101,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
             $("#busuariofechar").button({
                 icons: {primary: "ui-icon-closethick"}
             });
-            $("#busuariofechar").click(function() {
+            $("#busuariofechar").click(function () {
                 $("#dialog-form").dialog('close');
             });
 
@@ -190,7 +192,7 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                                 <?php if ($usuario->getDepartamentoid() == $departamentos[$i]->getDepartamentoid()) { ?>
                                         selected="selected"
                                     <?php } ?>
-                                        value="<?= $departamentos[$i]->getDepartamentoid() ?>"><?= $departamentos[$i]->getDepartamentonome(TRUE) ?></option>
+                                    value="<?= $departamentos[$i]->getDepartamentoid() ?>"><?= $departamentos[$i]->getDepartamentonome(TRUE) ?></option>
                                     <?php
                                 }
                             }
@@ -254,11 +256,11 @@ if (isset($_GET['situacao']) && !empty($_GET['situacao'])) {
                 type="hidden" 
                 name="usuarioid" 
                 value="<?= $usuario->getUsuarioid() ?>" >
-                <input 
-                    type="hidden" 
-                    id="control"
-                    name="control" 
-                    value="<?= $situacao ?>" >
+            <input 
+                type="hidden" 
+                id="control"
+                name="control" 
+                value="<?= $situacao ?>" >
         </fieldset>
     </form>
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
